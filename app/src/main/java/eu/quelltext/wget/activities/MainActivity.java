@@ -1,8 +1,10 @@
-package eu.quelltext.wget;
+package eu.quelltext.wget.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import eu.quelltext.wget.R;
 
 public class MainActivity extends AppCompatActivity {
 
