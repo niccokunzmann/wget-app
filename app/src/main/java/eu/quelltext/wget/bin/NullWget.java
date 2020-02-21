@@ -8,4 +8,9 @@ public class NullWget implements IWget {
     public String version() {
         return "null";
     }
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
 }

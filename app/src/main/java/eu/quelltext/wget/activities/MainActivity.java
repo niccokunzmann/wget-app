@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        IWget wget = new BinaryAccess().wget();
+        IWget wget = new BinaryAccess(this).wget();
         String version = wget.version();
         TextView versionText = (TextView) findViewById(R.id.version);
         versionText.setText(version);
