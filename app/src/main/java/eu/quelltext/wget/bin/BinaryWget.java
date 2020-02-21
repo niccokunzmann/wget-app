@@ -14,9 +14,8 @@ class BinaryWget implements IWget {
     @NonNull
     @Override
     public String version() {
-        Executable.Result result = null;
         try {
-            result = executable.run(new String[]{"--version"});
+            Executable.Result result = executable.run(new String[]{"--version"});
             result.waitFor();
             return result.getOutput();
         } catch (InterruptedException e) {
@@ -31,5 +30,10 @@ class BinaryWget implements IWget {
     public boolean isValid() {
         String version = version();
         return !version.equals("");
+    }
+
+    @Override
+    public Executable.Result run(String[] command) throws IOException {
+        return executable.run(command);
     }
 }

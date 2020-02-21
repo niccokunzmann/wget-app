@@ -9,4 +9,6 @@ public interface IWget {
     String version();
 
     boolean isValid();
+
+    Executable.Result run(String[] command) throws IOException;
 }

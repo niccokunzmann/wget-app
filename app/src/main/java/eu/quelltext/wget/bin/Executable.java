@@ -7,7 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-class Executable {
+public class Executable {
     private final String path;
 
     public Executable(String path) {
@@ -20,16 +20,21 @@ class Executable {
         Process process = Runtime.getRuntime().exec(command);
         DataOutputStream os = new DataOutputStream(process.getOutputStream());
         DataInputStream is = new DataInputStream(process.getInputStream());
-        return new Result(process, os, is);
+        return new ExecutionResult(process, os, is);
     }
 
-    public static class Result {
+    public interface Result {
+        void waitFor() throws InterruptedException;
+        String getOutput() throws IOException;
+    }
+
+    private static class ExecutionResult implements Result {
 
         private final Process process;
         private final DataOutputStream output;
         private final DataInputStream input;
 
-        public Result(Process process, DataOutputStream os, DataInputStream is) {
+        public ExecutionResult(Process process, DataOutputStream os, DataInputStream is) {
             this.process = process;
             this.output = os;
             this.input = is;
