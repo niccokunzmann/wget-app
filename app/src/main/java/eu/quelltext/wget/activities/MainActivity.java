@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Command> result = new ArrayList<>();
         result.add(Command.VERSION);
         result.add(Command.GET_IMAGE);
+        result.add(Command.PORTAL_TO_STDOUT);
+        result.add(Command.LOCALHOST_TO_STDOUT);
         return result;
     }
 

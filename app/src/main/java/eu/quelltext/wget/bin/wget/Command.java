@@ -23,10 +23,15 @@ import eu.quelltext.wget.bin.Executable;
 
 public class Command implements Parcelable {
 
-    public static final Command VERSION = new Command().addOption(BinaryOption.VERSION);
-    private static final String EXAMPLE_IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/3/39/Official_gnu.svg";
-    public static final Command GET_IMAGE = new Command().addOption(BinaryOption.CONTINUE).addUrl(EXAMPLE_IMAGE_URL);
     private static String BASE_COMMAND = "wget";
+    private static final String EXAMPLE_PORTAL_URL = "http://detectportal.firefox.com/success.txt";
+    private static final String EXAMPLE_IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/3/39/Official_gnu.svg";
+    private static final String EXAMPLE_LOCALHOST_URL = "http://localhost:8080";
+
+    public static final Command VERSION = new Command().addOption(Option.VERSION);
+    public static final Command GET_IMAGE = new Command().addOption(Option.DEBUG).addUrl(EXAMPLE_IMAGE_URL);
+    public static final Command PORTAL_TO_STDOUT = new Command().addOption(Option.OUTPUT.to("-")).addUrl(EXAMPLE_PORTAL_URL);
+    public static final Command LOCALHOST_TO_STDOUT = new Command().addOption(Option.OUTPUT.to("-")).addUrl(EXAMPLE_LOCALHOST_URL);
 
     private Command addUrl(String url) {
         urls.add(url);

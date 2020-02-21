@@ -15,6 +15,8 @@ public class Option implements Parcelable {
     public static Option CONTINUE = new BinaryOption("--continue", R.string.command_name_continue, R.string.command_explanation_continue);
     public static Option RECURSIVE = new BinaryOption("--recursive", R.string.command_name_recursive, R.string.command_explanation_recursive);
     public static Option MIRROR = new BinaryOption("--mirror", R.string.command_name_mirror, R.string.command_explanation_mirror);
+    public static Option DEBUG = new BinaryOption("--debug", R.string.command_name_debug, R.string.command_explanation_debug);
+    public static ArgumentOptionBuilder OUTPUT = new ArgumentOptionBuilder("-O", R.string.command_name_output_document, R.string.command_explanation_output_document);
 
     protected Option() {
     }
@@ -30,6 +32,8 @@ public class Option implements Parcelable {
                 return new Option(in);
             } if (name.equals(BinaryOption.class.getName())){
                 return new BinaryOption(in);
+            } if (name.equals(ArgumentOptionBuilder.ArgumentOption.class.getName())){
+                return new ArgumentOptionBuilder.ArgumentOption(in);
             }
             return new Unknown(in);
         }
