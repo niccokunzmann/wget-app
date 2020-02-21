@@ -16,7 +16,7 @@ class BinaryWget implements IWget {
     public String version() {
         Executable.Result result = null;
         try {
-            result = executable.run(new String[]{"version"});
+            result = executable.run(new String[]{"--version"});
             result.waitFor();
             return result.getOutput();
         } catch (InterruptedException e) {

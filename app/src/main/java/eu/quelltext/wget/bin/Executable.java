@@ -1,5 +1,8 @@
 package eu.quelltext.wget.bin;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,7 +17,9 @@ class Executable {
     }
 
     public Result run(String[] parameters) throws IOException {
-        Process process = Runtime.getRuntime().exec(this.path);
+        // concatenate two arrays, see https://stackoverflow.com/a/80559/1320237
+        String[] command = ArrayUtils.addAll(new String[]{this.path}, parameters);
+        Process process = Runtime.getRuntime().exec(command);
         DataOutputStream os = new DataOutputStream(process.getOutputStream());
         DataInputStream is = new DataInputStream(process.getInputStream());
         return new Result(process, os, is);
@@ -37,7 +42,9 @@ class Executable {
         }
 
         public String getOutput() throws IOException {
-            return input.readUTF();
+            // input stream to array, see https://stackoverflow.com/a/1264756/1320237
+            byte[] bytes = IOUtils.toByteArray(input);
+            return new String(bytes);
         }
     }
 }

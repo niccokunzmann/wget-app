@@ -2,6 +2,7 @@ package eu.quelltext.wget.bin;
 
 import android.content.Context;
 import android.net.http.HttpResponseCache;
+import android.provider.ContactsContract;
 
 import org.apache.commons.io.IOUtils;
 
@@ -70,7 +71,9 @@ public class BinaryAccess {
             fos.close();
 
             File file = context.getFileStreamPath(name);
-            file.setExecutable(true);
+            if (!file.setExecutable(true)) {
+                throw new IOException("Could not set executable bit for " + name);
+            }
         }
 
         public IWget wget() {
@@ -78,7 +81,11 @@ public class BinaryAccess {
         }
 
         private Executable getExecutable() {
-            return new Executable(context.getFilesDir().getPath() + "/" + this.name);
+            String directory = context.getFilesDir().getPath();
+            File directoryObject = new File(directory);
+            directoryObject.mkdirs();
+            String path = directory + "/" + this.name;
+            return new Executable(path);
         }
     }
 }
