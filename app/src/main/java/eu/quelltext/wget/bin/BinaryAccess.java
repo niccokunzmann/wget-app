@@ -51,7 +51,6 @@ public class BinaryAccess {
             // resources created like https://stackoverflow.com/a/29308338/1320237
                 new BinaryInstaller(R.raw.wget, "wget"),
                 new BinaryInstaller(R.raw.wget_x86, "wget_x86"),
-                new BinaryInstaller(R.raw.wget_armeabi, "wget_armeabi"),
                 new BinaryInstaller(R.raw.wget_armeabi_no_pie, "wget_armeabi_no_pie"),
                 new BinaryInstaller(R.raw.wget_mips, "wget_mips")
         };
