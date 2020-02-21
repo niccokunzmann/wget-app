@@ -7,8 +7,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import eu.quelltext.wget.R;
-
 class Executable {
     private final String path;
 
