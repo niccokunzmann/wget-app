@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import eu.quelltext.wget.R;
-import eu.quelltext.wget.activities.MainActivity;
-
-import static android.provider.Telephony.Mms.Part.FILENAME;
 
 /* This object is responsible for choosing the correct wget executable.
     https://stackoverflow.com/a/5642593/1320237
@@ -31,6 +28,11 @@ public class BinaryAccess {
     public IWget wget() {
         BinaryInstaller[] installers = installers();
         for (BinaryInstaller installer: installers) {
+            if (installer.isInstalled() && installer.wget().isValid()) {
+                return installer.wget();
+            }
+        }
+        for (BinaryInstaller installer: installers) {
             try {
                 installer.install();
             } catch (IOException e) {
@@ -39,6 +41,7 @@ public class BinaryAccess {
             if (installer.wget().isValid()) {
                 return installer.wget();
             }
+            installer.uninstall();
         }
         return new NullWget();
     }
@@ -81,11 +84,23 @@ public class BinaryAccess {
         }
 
         private Executable getExecutable() {
+            return new Executable(getExecutablePath());
+        }
+
+        private String getExecutablePath() {
             String directory = context.getFilesDir().getPath();
-            File directoryObject = new File(directory);
-            directoryObject.mkdirs();
             String path = directory + "/" + this.name;
-            return new Executable(path);
+            return path;
+        }
+
+        public boolean isInstalled() {
+            File file = new File(getExecutablePath());
+            return file.exists() && file.canExecute();
+        }
+
+        public void uninstall() {
+            File file = context.getFileStreamPath(name);
+            file.delete();
         }
     }
 }
