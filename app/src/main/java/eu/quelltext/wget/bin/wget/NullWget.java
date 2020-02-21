@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 
+import eu.quelltext.wget.R;
 import eu.quelltext.wget.bin.Executable;
 import eu.quelltext.wget.bin.wget.IWget;
 
@@ -33,6 +34,11 @@ public class NullWget implements IWget {
         @Override
         public String getOutput() throws IOException {
             return "";
+        }
+
+        @Override
+        public int getReturnCode() {
+            return R.string.command_result_0;
         }
     }
 }

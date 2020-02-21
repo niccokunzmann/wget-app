@@ -45,10 +45,15 @@ public class CommandActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         Command command = extras.getParcelable(ARG_COMMAND); //if it's a string you stored.
 
+        TextView errorCode = (TextView) findViewById(R.id.text_result_description);
+        TextView commandText = (TextView) findViewById(R.id.command);
+        commandText.setText(command.asCommandLineText());
+
         try {
             Executable.Result result = command.run(this);
             result.waitFor();
             output.setText(result.getOutput());
+            errorCode.setText(result.getReturnCode());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {

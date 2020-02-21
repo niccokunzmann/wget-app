@@ -1,11 +1,15 @@
 package eu.quelltext.wget.bin;
 
+import android.os.Build;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import eu.quelltext.wget.R;
 
 public class Executable {
     private final String path;
@@ -26,6 +30,8 @@ public class Executable {
     public interface Result {
         void waitFor() throws InterruptedException;
         String getOutput() throws IOException;
+
+        int getReturnCode();
     }
 
     private static class ExecutionResult implements Result {
@@ -49,5 +55,44 @@ public class Executable {
             byte[] bytes = IOUtils.toByteArray(input);
             return new String(bytes);
         }
+
+        private final int[] ERROR_CODE_STRINGS = new int[]{
+                R.string.command_result_0,
+                R.string.command_result_1,
+                R.string.command_result_2,
+                R.string.command_result_3,
+                R.string.command_result_4,
+                R.string.command_result_5,
+                R.string.command_result_6,
+                R.string.command_result_7,
+                R.string.command_result_8
+        };
+
+        @Override
+        public int getReturnCode() {
+            if (isRunning()) {
+                return R.string.command_result_running;
+            }
+            int code = process.exitValue();
+            if (code < ERROR_CODE_STRINGS.length) {
+                return ERROR_CODE_STRINGS[code];
+            }
+            return R.string.command_result_unkonwn;
+        }
+
+        private boolean isRunning() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                return process.isAlive();
+            }
+            try {
+                // should raise, see https://www.baeldung.com/java-process-api#exitvalue-method
+                process.exitValue();
+            } catch (IllegalStateException e) {
+                return true;
+            }
+            return false;
+        }
+
+
     }
 }

@@ -8,6 +8,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.RequiresApi;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,11 +20,13 @@ import eu.quelltext.wget.activities.MainActivity;
 import eu.quelltext.wget.bin.BinaryAccess;
 import eu.quelltext.wget.bin.Executable;
 
+
 public class Command implements Parcelable {
 
     public static final Command VERSION = new Command().addOption(BinaryOption.VERSION);
     private static final String EXAMPLE_IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/3/39/Official_gnu.svg";
     public static final Command GET_IMAGE = new Command().addOption(BinaryOption.CONTINUE).addUrl(EXAMPLE_IMAGE_URL);
+    private static String BASE_COMMAND = "wget";
 
     private Command addUrl(String url) {
         urls.add(url);
@@ -84,17 +88,25 @@ public class Command implements Parcelable {
 
     public Executable.Result run(Context context) throws IOException {
         IWget wget = new BinaryAccess(context).wget();
+        String[] commandList = getCommandList();
+        return wget.run(commandList);
+    }
+
+    private String[] getCommandList() {
         List<String> command = new ArrayList<>();
         for (Option option: options) {
             for (String argument : option.asArguments()) {
                 command.add(argument);
             }
         }
+        for (String url: urls) {
+            command.add(url);
+        }
         String[] commandList = new String[command.size()];
         for (int i = 0; i < command.size(); i++) {
             commandList[i] = command.get(i);
         }
-        return wget.run(commandList);
+        return commandList;
     }
 
     public List<String> getUrls() {
@@ -128,5 +140,14 @@ public class Command implements Parcelable {
             result += url + delimiter;
         }
         return result.substring(0, result.length() - delimiter.length());
+    }
+
+    public String asCommandLineText() {
+        String cmd = BASE_COMMAND;
+        String[] commands = getCommandList();
+        for (String item: commands) {
+            cmd += " " + StringEscapeUtils.escapeXSI(item);
+        }
+        return cmd;
     }
 }

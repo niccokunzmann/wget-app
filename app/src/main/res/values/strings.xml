@@ -104,4 +104,16 @@
     <string name="command_explanation_recursive">Turn on recursive retrieving. The default maximum depth is 5.</string>
     <string name="command_name_mirror">mirror</string>
     <string name="command_explanation_mirror">Turn on options suitable for mirroring. This option turns on recursion and time-stamping, sets infinite recursion depth and keeps FTP directory listings. It is currently equivalent to -r -N -l inf --no-remove-listing.</string>
+    <string name="command_result">Execution Result:</string>
+    <string name="command_result_0">No problems occurred.</string>
+    <string name="command_result_1">Generic error code.</string>
+    <string name="command_result_2">Parse error - for instance, when parsing command-line options, the .wgetrc or .netrc...</string>
+    <string name="command_result_3">File I/O error.</string>
+    <string name="command_result_4">Network failure.</string>
+    <string name="command_result_5">SSL verification failure.</string>
+    <string name="command_result_6">Username/password authentication failure.</string>
+    <string name="command_result_7">Protocol errors.</string>
+    <string name="command_result_8">Server issued an error response.</string>
+    <string name="command_result_unkonwn">Wget returned an undocumented error code.</string>
+    <string name="command_result_running">The process is still running.</string>
 </resources>
