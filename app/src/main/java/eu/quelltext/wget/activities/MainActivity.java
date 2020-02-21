@@ -38,14 +38,15 @@ public class MainActivity extends AppCompatActivity {
         // use a linear layout manager
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
+        // specify an adapter (see also next example)
+        CommandsAdapter mAdapter = new CommandsAdapter();
+        recyclerView.setAdapter(mAdapter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // specify an adapter (see also next example)
-        CommandsAdapter mAdapter = new CommandsAdapter();
-        recyclerView.setAdapter(mAdapter);
     }
 
     private List<Command> getCommands() {
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             private final Button buttonEdit;
             private final TextView rightText;
             private final TextView bottomText;
+            private final View background;
 
             public CommandViewHolder(@NonNull View root) {
                 super(root);
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 buttonEdit = root.findViewById(R.id.button_edit);
                 rightText = root.findViewById(R.id.text_right);
                 bottomText = root.findViewById(R.id.text_bottom);
+                background = root.findViewById(R.id.background);
             }
 
             public void display(final Command command) {
@@ -96,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
                     rightText.setText(command.getOptionsText(MainActivity.this));
                 }
             }
+
+            public void odd() {
+                background.setBackgroundColor(getResources().getColor(R.color.background_odd));
+            }
+
+            public void even() {
+                background.setBackgroundColor(getResources().getColor(R.color.background_even));
+            }
         }
 
         @NonNull
@@ -113,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
             CommandViewHolder holder = (CommandViewHolder)holder_;
             Command command = getCommands().get(position);
             holder.display(command);
+            if (position % 2 == 1) {
+                holder.odd();
+            } else {
+                holder.even();
+            }
         }
 
         @Override
