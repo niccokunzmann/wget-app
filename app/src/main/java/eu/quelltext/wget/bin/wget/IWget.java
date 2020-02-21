@@ -1,8 +1,10 @@
-package eu.quelltext.wget.bin;
+package eu.quelltext.wget.bin.wget;
 
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
+
+import eu.quelltext.wget.bin.Executable;
 
 public interface IWget {
     @NonNull

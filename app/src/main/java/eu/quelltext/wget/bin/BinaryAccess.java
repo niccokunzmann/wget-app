@@ -1,8 +1,6 @@
 package eu.quelltext.wget.bin;
 
 import android.content.Context;
-import android.net.http.HttpResponseCache;
-import android.provider.ContactsContract;
 
 import org.apache.commons.io.IOUtils;
 
@@ -12,6 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import eu.quelltext.wget.R;
+import eu.quelltext.wget.bin.wget.BinaryWget;
+import eu.quelltext.wget.bin.wget.IWget;
+import eu.quelltext.wget.bin.wget.NullWget;
 
 /* This object is responsible for choosing the correct wget executable.
     https://stackoverflow.com/a/5642593/1320237

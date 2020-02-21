@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import eu.quelltext.wget.R;
 import eu.quelltext.wget.bin.Executable;
-import eu.quelltext.wget.bin.WgetCommand;
+import eu.quelltext.wget.bin.wget.Command;
 
 public class CommandActivity extends AppCompatActivity {
 
@@ -43,7 +43,7 @@ public class CommandActivity extends AppCompatActivity {
         // get parcelable from intent https://stackoverflow.com/a/7181792/1320237
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        WgetCommand command = extras.getParcelable(ARG_COMMAND); //if it's a string you stored.
+        Command command = extras.getParcelable(ARG_COMMAND); //if it's a string you stored.
 
         try {
             Executable.Result result = command.run(this);

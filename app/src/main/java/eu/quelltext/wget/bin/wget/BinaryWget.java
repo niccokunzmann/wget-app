@@ -1,10 +1,12 @@
-package eu.quelltext.wget.bin;
+package eu.quelltext.wget.bin.wget;
 
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
 
-class BinaryWget implements IWget {
+import eu.quelltext.wget.bin.Executable;
+
+public class BinaryWget implements IWget {
     private final Executable executable;
 
     public BinaryWget(Executable executable) {
