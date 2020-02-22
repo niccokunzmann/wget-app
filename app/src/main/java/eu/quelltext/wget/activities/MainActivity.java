@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +31,14 @@ public class MainActivity extends AppCompatActivity {
     private CommandsAdapter mAdapter;
     private List<Command> commands;
     private SharedPreferences mPrefs;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.commands);
+        recyclerView = findViewById(R.id.commands);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -52,6 +54,14 @@ public class MainActivity extends AppCompatActivity {
 
         mPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE);
         loadCommands();
+
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editCommand(Command.newDefault());
+            }
+        });
     }
 
     private void loadCommands() {
@@ -94,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor ed = mPrefs.edit();
         String commandString = Command.listToString(commands);
         ed.putString(PREFRENCES_COMMANDS, commandString);
-        ed.commit();
+        ed.apply();
     }
 
     class CommandsAdapter extends RecyclerView.Adapter {
@@ -147,6 +157,12 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+                root.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editCommand(command);
+                    }
+                });
             }
 
             public void odd() {
@@ -187,6 +203,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void editCommand(Command command) {
+        // open a new activity, see https://stackoverflow.com/a/4186097/1320237
+        Intent myIntent = new Intent(MainActivity.this, ConfigurationActivity.class);
+        myIntent.putExtra(ConfigurationActivity.ARG_COMMAND, command); //Optional parameters
+        MainActivity.this.startActivity(myIntent);
+    }
+
     private void removeCommand(Command command) {
         int index = commands.indexOf(command);
         commands.remove(index);
@@ -198,4 +221,6 @@ public class MainActivity extends AppCompatActivity {
         commands.add(0, command);
         mAdapter.notifyDataSetChanged();
     }
+
+
 }

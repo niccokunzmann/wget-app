@@ -38,6 +38,10 @@ public class Command implements Parcelable {
     public static final Command PORTAL_TO_STDOUT = new Command().addOption(Options.OUTPUT.to("-")).addUrl(EXAMPLE_PORTAL_URL);
     public static final Command LOCALHOST_TO_STDOUT = new Command().addOption(Options.OUTPUT.to("-")).addUrl(EXAMPLE_LOCALHOST_URL);
 
+    public static Command newDefault() {
+        return new Command();
+    }
+
     private Command addUrl(String url) {
         urls.add(url);
         return this;
