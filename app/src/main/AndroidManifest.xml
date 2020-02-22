@@ -13,10 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.Configuration"
-            android:label="@string/title_activity_configuration"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
             android:name=".activities.CommandActivity"
             android:label="@string/title_activity_command"
             android:theme="@style/AppTheme.NoActionBar" />
