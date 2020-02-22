@@ -17,10 +17,10 @@ public class Options {
     public static Manual MANUAL = new Manual();
 
     public static Option VERSION = addBinary("--version", R.string.command_name_version, R.string.command_explanation_version);
-    public static Option CONTINUE = new BinaryOption("--continue", R.string.command_name_continue, R.string.command_explanation_continue);
-    public static Option RECURSIVE = new BinaryOption("--recursive", R.string.command_name_recursive, R.string.command_explanation_recursive);
-    public static Option MIRROR = new BinaryOption("--mirror", R.string.command_name_mirror, R.string.command_explanation_mirror);
-    public static Option DEBUG = new BinaryOption("--debug", R.string.command_name_debug, R.string.command_explanation_debug);
+    public static Option CONTINUE = addBinary("--continue", R.string.command_name_continue, R.string.command_explanation_continue);
+    public static Option RECURSIVE = addBinary("--recursive", R.string.command_name_recursive, R.string.command_explanation_recursive);
+    public static Option MIRROR = addBinary("--mirror", R.string.command_name_mirror, R.string.command_explanation_mirror);
+    public static Option DEBUG = addBinary("--debug", R.string.command_name_debug, R.string.command_explanation_debug);
     public static ArgumentOptionBuilder OUTPUT = addArgument("-O", R.string.command_name_output_document, R.string.command_explanation_output_document);
 
 

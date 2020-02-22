@@ -29,9 +29,10 @@ public class Executable {
 
     public interface Result {
         void waitFor() throws InterruptedException;
+        boolean isRunning();
         String getOutput() throws IOException;
 
-        int getReturnCode();
+        int getReturnCodeStringId();
     }
 
     private static class ExecutionResult implements Result {
@@ -69,7 +70,7 @@ public class Executable {
         };
 
         @Override
-        public int getReturnCode() {
+        public int getReturnCodeStringId() {
             if (isRunning()) {
                 return R.string.command_result_running;
             }
@@ -80,7 +81,7 @@ public class Executable {
             return R.string.command_result_unkonwn;
         }
 
-        private boolean isRunning() {
+        public boolean isRunning() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 return process.isAlive();
             }

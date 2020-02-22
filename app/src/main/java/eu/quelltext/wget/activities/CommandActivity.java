@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,15 +22,21 @@ import eu.quelltext.wget.bin.wget.Command;
 public class CommandActivity extends AppCompatActivity {
 
     public static final String ARG_COMMAND = "command";
+    private static final long UPDATE_GUI_MILLIS = 100;
+    private Handler handler;
+    private TextView errorCode;
+    private TextView commandText;
+    private TextView output;
+    private Executable.Result result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_command);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -38,27 +45,64 @@ public class CommandActivity extends AppCompatActivity {
             }
         });
 
-        TextView output = (TextView)findViewById(R.id.text_output);
+        output = findViewById(R.id.text_output);
 
         // get parcelable from intent https://stackoverflow.com/a/7181792/1320237
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        Command command = extras.getParcelable(ARG_COMMAND); //if it's a string you stored.
+        Command command = extras.getParcelable(ARG_COMMAND);
 
-        TextView errorCode = (TextView) findViewById(R.id.text_result_description);
-        TextView commandText = (TextView) findViewById(R.id.command);
+        errorCode = findViewById(R.id.text_result_description);
+        commandText = findViewById(R.id.command);
         commandText.setText(command.asCommandLineText());
 
         try {
-            Executable.Result result = command.run(this);
-            result.waitFor();
-            output.setText(result.getOutput());
-            errorCode.setText(result.getReturnCode());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            result = command.run(this);
         } catch (IOException e) {
             e.printStackTrace();
+            result = new IOErrorResult();
         }
 
+        // use a handler to update the gui
+        // see http://www.mopri.de/2010/timertask-bad-do-it-the-android-way-use-a-handler/
+        handler = new Handler();
+        handler.postDelayed(new RunGuiUpdate(), UPDATE_GUI_MILLIS);
+    }
+
+    class RunGuiUpdate implements Runnable {
+        @Override
+        public void run() {
+            try {
+                output.setText(result.getOutput());
+            } catch (IOException e) {
+                e.printStackTrace();
+                output.setText(R.string.error_io_exception_output);
+            }
+            errorCode.setText(result.getReturnCodeStringId());
+            if (result.isRunning()) {
+                handler.postDelayed(this, UPDATE_GUI_MILLIS);
+            }
+        }
+    };
+
+    private class IOErrorResult implements Executable.Result {
+        @Override
+        public void waitFor() throws InterruptedException {
+        }
+
+        @Override
+        public boolean isRunning() {
+            return false;
+        }
+
+        @Override
+        public String getOutput() throws IOException {
+            return "";
+        }
+
+        @Override
+        public int getReturnCodeStringId() {
+            return R.string.error_io_exception_start;
+        }
     }
 }

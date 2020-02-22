@@ -32,12 +32,17 @@ public class NullWget implements IWget {
         }
 
         @Override
+        public boolean isRunning() {
+            return false;
+        }
+
+        @Override
         public String getOutput() throws IOException {
             return "";
         }
 
         @Override
-        public int getReturnCode() {
+        public int getReturnCodeStringId() {
             return R.string.command_result_0;
         }
     }
