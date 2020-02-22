@@ -6,19 +6,21 @@ import android.os.Parcel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-class ArgumentOptionBuilder implements Options.Manual.ManualEntry {
+class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOption {
 
     private static final String JSON_ARGUMENT = "argument";
 
     private final String cmd;
     private final int nameId;
     private final int explanationId;
+    private final DisplayStrategy displayStrategy;
 
-    public ArgumentOptionBuilder(String cmd, int nameId, int explanationId) {
+    public ArgumentOptionBuilder(String cmd, int nameId, int explanationId, DisplayStrategy displayStrategy) {
         super();
         this.cmd = cmd;
         this.nameId = nameId;
         this.explanationId = explanationId;
+        this.displayStrategy = displayStrategy;
     }
 
     public ArgumentOption to(String argument) {
@@ -35,6 +37,14 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry {
     @Override
     public String manualId() {
         return cmd;
+    }
+
+    @Override
+    public void displayIn(Display section) {
+        section.addSwitch();
+        section.addTitle(this.nameId);
+        section.addExplanation(this.explanationId);
+        displayStrategy.displayIn(section);
     }
 
     public static class ArgumentOption extends eu.quelltext.wget.bin.wget.Option {
@@ -87,4 +97,24 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry {
             return cmd;
         }
     }
+
+    public interface DisplayStrategy{
+
+        void displayIn(Display section);
+    }
+
+    public static final DisplayStrategy INTEGER = new DisplayStrategy() {
+
+        @Override
+        public void displayIn(Display section) {
+            section.addIntegerField();
+        }
+    };
+    public static final DisplayStrategy FILE = new DisplayStrategy() {
+
+        @Override
+        public void displayIn(Display section) {
+            section.addFileDialog();
+        }
+    };
 }

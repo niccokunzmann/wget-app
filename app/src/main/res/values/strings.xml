@@ -122,4 +122,14 @@
     <string name="command_explanation_output_document">The documents will not be written to the appropriate files, but all will be concatenated together and written to file. If - is used as file, documents will be printed to standard output, disabling link conversion. (Use ./- to print to a file literally named -.)</string>
     <string name="error_io_exception_start">There was an IO error when the command was started.</string>
     <string name="error_io_exception_output">There was an error getting the output of the process.</string>
+    <string name="section_title_startup">Basic Startup Options</string>
+    <string name="command_name_help">help</string>
+    <string name="command_explanation_help">Print a help message describing all of Wget\'s command-line options.</string>
+    <string name="section_title_download">Download Options</string>
+    <string name="command_name_tries">Tries</string>
+    <string name="command_explanation_tries">Set number of tries to number. Specify 0 or inf for infinite retrying. The default is to retry 20 times, with the exception of fatal errors like \"connection refused\" or \"not found\" (404), which are not retried.</string>
+    <string name="section_title_recursive">Recursive Retrieval Options</string>
+    <string name="command_name_depth">depth</string>
+    <string name="command_explanation_depth">Specify recursion maximum depth level depth.</string>
+    <string name="invalid_option">The app has an error and displays an invalid option here.</string>
 </resources>

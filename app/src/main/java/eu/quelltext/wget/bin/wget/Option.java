@@ -10,7 +10,7 @@ import org.json.JSONObject;
 /*
   Base class for different options.
  */
-public class Option implements Parcelable, Options.Manual.ManualEntry {
+public class Option implements Parcelable, Options.Manual.ManualEntry, DisplayableOption {
 
     protected Option() {
     }
@@ -77,6 +77,11 @@ public class Option implements Parcelable, Options.Manual.ManualEntry {
 
     public String toShortText(Context context) {
         return "";
+    }
+
+    @Override
+    public void displayIn(Display section) {
+        section.invalid();
     }
 
     static class Unknown extends Option {

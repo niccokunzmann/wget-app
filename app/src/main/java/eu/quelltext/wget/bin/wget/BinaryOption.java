@@ -56,4 +56,11 @@ class BinaryOption extends Option {
     public Option fromManualJSON(JSONObject jsonOption) {
         return new BinaryOption(cmd, nameId, explanationId);
     }
+
+    @Override
+    public void displayIn(Display section) {
+        section.addSwitch();
+        section.addTitle(this.nameId);
+        section.addExplanation(this.explanationId);
+    }
 }

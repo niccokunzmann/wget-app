@@ -16,16 +16,27 @@ public class Options {
 
     public static Manual MANUAL = new Manual();
 
-    public static Option VERSION = addBinary("--version", R.string.command_name_version, R.string.command_explanation_version);
-    public static Option CONTINUE = addBinary("--continue", R.string.command_name_continue, R.string.command_explanation_continue);
-    public static Option RECURSIVE = addBinary("--recursive", R.string.command_name_recursive, R.string.command_explanation_recursive);
-    public static Option MIRROR = addBinary("--mirror", R.string.command_name_mirror, R.string.command_explanation_mirror);
-    public static Option DEBUG = addBinary("--debug", R.string.command_name_debug, R.string.command_explanation_debug);
-    public static ArgumentOptionBuilder OUTPUT = addArgument("-O", R.string.command_name_output_document, R.string.command_explanation_output_document);
+    public static final Option VERSION = addBinary("--version", R.string.command_name_version, R.string.command_explanation_version);
+    public static final Option HELP = addBinary("--help", R.string.command_name_help, R.string.command_explanation_help);
 
+    public static final  Option CONTINUE = addBinary("--continue", R.string.command_name_continue, R.string.command_explanation_continue);
+    public static final Option RECURSIVE = addBinary("--recursive", R.string.command_name_recursive, R.string.command_explanation_recursive);
+    public static final Option MIRROR = addBinary("--mirror", R.string.command_name_mirror, R.string.command_explanation_mirror);
+    public static final Option DEBUG = addBinary("--debug", R.string.command_name_debug, R.string.command_explanation_debug);
 
-    private static ArgumentOptionBuilder addArgument(String id, int name, int text) {
-        ArgumentOptionBuilder result = new ArgumentOptionBuilder(id, name, text);
+    public static final ArgumentOptionBuilder OUTPUT = addFileArgument("-O", R.string.command_name_output_document, R.string.command_explanation_output_document);
+    public static final ArgumentOptionBuilder TRIES = addIntArgument("--tries", R.string.command_name_tries, R.string.command_explanation_tries);
+    public static final ArgumentOptionBuilder DEPTH = addIntArgument("-l", R.string.command_name_depth, R.string.command_explanation_depth);
+
+    private static ArgumentOptionBuilder addIntArgument(String id, int name, int text) {
+        return addArgument(id, name, text, ArgumentOptionBuilder.INTEGER);
+    }
+    private static ArgumentOptionBuilder addFileArgument(String id, int name, int text) {
+        return addArgument(id, name, text, ArgumentOptionBuilder.FILE);
+    }
+
+    private static ArgumentOptionBuilder addArgument(String id, int name, int text, ArgumentOptionBuilder.DisplayStrategy displayStrategy) {
+        ArgumentOptionBuilder result = new ArgumentOptionBuilder(id, name, text, displayStrategy);
         MANUAL.store(result);
         return result;
     }
