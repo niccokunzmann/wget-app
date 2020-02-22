@@ -81,5 +81,10 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry {
             super.toJSON(json);
             json.put(JSON_ARGUMENT, argument);
         }
+
+        @Override
+        public String manualId() {
+            return cmd;
+        }
     }
 }

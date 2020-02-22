@@ -14,6 +14,8 @@ import eu.quelltext.wget.activities.MainActivity;
 
 public class Options {
 
+    public static Manual MANUAL = new Manual();
+
     public static Option VERSION = addBinary("--version", R.string.command_name_version, R.string.command_explanation_version);
     public static Option CONTINUE = new BinaryOption("--continue", R.string.command_name_continue, R.string.command_explanation_continue);
     public static Option RECURSIVE = new BinaryOption("--recursive", R.string.command_name_recursive, R.string.command_explanation_recursive);
@@ -21,7 +23,6 @@ public class Options {
     public static Option DEBUG = new BinaryOption("--debug", R.string.command_name_debug, R.string.command_explanation_debug);
     public static ArgumentOptionBuilder OUTPUT = addArgument("-O", R.string.command_name_output_document, R.string.command_explanation_output_document);
 
-    public static Manual MANUAL = new Manual();
 
     private static ArgumentOptionBuilder addArgument(String id, int name, int text) {
         ArgumentOptionBuilder result = new ArgumentOptionBuilder(id, name, text);

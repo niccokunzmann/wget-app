@@ -164,14 +164,14 @@ public class Command implements Parcelable {
     public JSONObject toJSON() throws JSONException {
         JSONObject result = new JSONObject();
         JSONArray jsonOptions = new JSONArray();
-        JSONArray jsonUrls= new JSONArray();
+        JSONArray jsonUrls = new JSONArray();
         result.put(JSON_OPTIONS, jsonOptions);
         result.put(JSON_URLS, jsonUrls);
         for (Option option: options) {
             jsonOptions.put(option.toJSON());
         }
         for (String url: urls) {
-            jsonOptions.put(url);
+            jsonUrls.put(url);
         }
         return result;
     }

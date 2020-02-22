@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             commands = Command.listFromString(commandsString);
         }
+        if (commands.size() == 0) {
+            commands = defaultCommands();
+        }
         mAdapter.notifyDataSetChanged();
     }
 
@@ -89,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
         // see https://developer.android.com/reference/android/app/Activity.html#SavingPersistentState
         // for persistent state
         SharedPreferences.Editor ed = mPrefs.edit();
-        ed.putString(PREFRENCES_COMMANDS, Command.listToString(commands));
+        String commandString = Command.listToString(commands);
+        ed.putString(PREFRENCES_COMMANDS, commandString);
         ed.commit();
     }
 
