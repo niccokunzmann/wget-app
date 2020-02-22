@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import eu.quelltext.wget.activities.ConfigurationActivity;
+
 /*
   Base class for different options.
  */
@@ -82,6 +84,10 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
     @Override
     public void displayIn(Display section) {
         section.invalid();
+    }
+
+    public void fill(Display display) {
+        display.switchOn();
     }
 
     static class Unknown extends Option {

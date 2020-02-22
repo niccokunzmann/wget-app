@@ -2,8 +2,10 @@ package eu.quelltext.wget.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +20,27 @@ import java.util.List;
 import java.util.Set;
 
 import eu.quelltext.wget.R;
+import eu.quelltext.wget.bin.wget.Command;
 import eu.quelltext.wget.bin.wget.DisplayableOption;
+import eu.quelltext.wget.bin.wget.Option;
 import eu.quelltext.wget.bin.wget.Options;
 
 public class ConfigurationActivity extends AppCompatActivity {
 
     public static final String ARG_COMMAND = "command";
     private LinearLayout sectionsView;
+    private Command command;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuration);
+
+        // get parcelable from intent https://stackoverflow.com/a/7181792/1320237
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        command = extras.getParcelable(ARG_COMMAND);
+
 
         sectionsView = findViewById(R.id.sections);
 
@@ -111,6 +122,10 @@ public class ConfigurationActivity extends AppCompatActivity {
         private void display(DisplayableOption option) {
             OptionBuilder builder = new OptionBuilder();
             option.displayIn(builder);
+            Option prefilledOption = command.getOptionWithId(option.manualId());
+            if (prefilledOption != null) {
+                prefilledOption.fill(builder);
+            }
             builder.done();
         }
 
@@ -124,6 +139,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         class OptionBuilder implements DisplayableOption.Display {
 
             private final View optionView;
+            private Switch toggle;
             private Set<Integer> hideViewsWithIds = new HashSet<>();
 
             private OptionBuilder() {
@@ -131,6 +147,7 @@ public class ConfigurationActivity extends AppCompatActivity {
                 // https://stackoverflow.com/a/6070631/1320237
                 optionView = LayoutInflater.from(ConfigurationActivity.this)
                         .inflate(R.layout.option, optionsView, false);
+
                 hideViewsWithIds.add(R.id.title);
                 hideViewsWithIds.add(R.id.toggle);
                 hideViewsWithIds.add(R.id.number);
@@ -165,8 +182,8 @@ public class ConfigurationActivity extends AppCompatActivity {
 
             @Override
             public void addSwitch() {
-                final Switch toggle = showView(R.id.toggle);
-                optionsView.setOnClickListener(new View.OnClickListener() {
+                toggle = showView(R.id.toggle);
+                optionView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         toggle.toggle();
@@ -182,6 +199,11 @@ public class ConfigurationActivity extends AppCompatActivity {
             @Override
             public void addFileDialog() {
                 showView(R.id.file);
+            }
+
+            @Override
+            public void switchOn() {
+                toggle.setChecked(true);
             }
 
             public void done() {

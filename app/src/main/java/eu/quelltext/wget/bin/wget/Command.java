@@ -234,4 +234,13 @@ public class Command implements Parcelable {
         }
         return new ArrayList<>();
     }
+
+    public Option getOptionWithId(String id) {
+        for (Option option: options) {
+            if (option.manualId().equals(id)) {
+                return option;
+            }
+        }
+        return null;
+    }
 }

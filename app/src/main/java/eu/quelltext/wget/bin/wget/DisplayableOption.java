@@ -4,6 +4,8 @@ public interface DisplayableOption {
 
     void displayIn(Display section);
 
+    String manualId();
+
     interface Display {
 
         void invalid();
@@ -17,5 +19,7 @@ public interface DisplayableOption {
         void addIntegerField();
 
         void addFileDialog();
+
+        void switchOn();
     }
 }
