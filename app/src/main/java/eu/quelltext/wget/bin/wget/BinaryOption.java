@@ -3,6 +3,8 @@ package eu.quelltext.wget.bin.wget;
 import android.content.Context;
 import android.os.Parcel;
 
+import org.json.JSONObject;
+
 class BinaryOption extends Option {
     private final String cmd;
     private final int nameId;
@@ -43,5 +45,15 @@ class BinaryOption extends Option {
     @Override
     public String toShortText(Context context) {
         return context.getResources().getString(nameId);
+    }
+
+    @Override
+    public String manualId() {
+        return cmd;
+    }
+
+    @Override
+    public Option fromManualJSON(JSONObject jsonOption) {
+        return new BinaryOption(cmd, nameId, explanationId);
     }
 }

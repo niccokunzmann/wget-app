@@ -9,6 +9,9 @@ import android.os.Parcelable;
 import androidx.annotation.RequiresApi;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,15 +26,17 @@ import eu.quelltext.wget.bin.Executable;
 
 public class Command implements Parcelable {
 
+    private static final String JSON_OPTIONS = "options";
+    private static final String JSON_URLS = "urls";
     private static String BASE_COMMAND = "wget";
     private static final String EXAMPLE_PORTAL_URL = "http://detectportal.firefox.com/success.txt";
     private static final String EXAMPLE_IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/3/39/Official_gnu.svg";
     private static final String EXAMPLE_LOCALHOST_URL = "http://localhost:8080";
 
-    public static final Command VERSION = new Command().addOption(Option.VERSION);
-    public static final Command GET_IMAGE = new Command().addOption(Option.DEBUG).addUrl(EXAMPLE_IMAGE_URL);
-    public static final Command PORTAL_TO_STDOUT = new Command().addOption(Option.OUTPUT.to("-")).addUrl(EXAMPLE_PORTAL_URL);
-    public static final Command LOCALHOST_TO_STDOUT = new Command().addOption(Option.OUTPUT.to("-")).addUrl(EXAMPLE_LOCALHOST_URL);
+    public static final Command VERSION = new Command().addOption(Options.VERSION);
+    public static final Command GET_IMAGE = new Command().addOption(Options.DEBUG).addUrl(EXAMPLE_IMAGE_URL);
+    public static final Command PORTAL_TO_STDOUT = new Command().addOption(Options.OUTPUT.to("-")).addUrl(EXAMPLE_PORTAL_URL);
+    public static final Command LOCALHOST_TO_STDOUT = new Command().addOption(Options.OUTPUT.to("-")).addUrl(EXAMPLE_LOCALHOST_URL);
 
     private Command addUrl(String url) {
         urls.add(url);
@@ -154,5 +159,75 @@ public class Command implements Parcelable {
             cmd += " " + StringEscapeUtils.escapeXSI(item);
         }
         return cmd;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject result = new JSONObject();
+        JSONArray jsonOptions = new JSONArray();
+        JSONArray jsonUrls= new JSONArray();
+        result.put(JSON_OPTIONS, jsonOptions);
+        result.put(JSON_URLS, jsonUrls);
+        for (Option option: options) {
+            jsonOptions.put(option.toJSON());
+        }
+        for (String url: urls) {
+            jsonOptions.put(url);
+        }
+        return result;
+    }
+
+    public static Command fromJSON(JSONObject data) throws JSONException {
+        Command command = new Command();
+        JSONArray jsonOptions = data.getJSONArray(JSON_OPTIONS);
+        JSONArray jsonUrls= data.getJSONArray(JSON_URLS);
+        for (int i = 0; i < jsonOptions.length(); i++) {
+            JSONObject jsonOption = jsonOptions.getJSONObject(i);
+            Option option = Option.fromJSON(jsonOption);
+            command.addOption(option);
+        }
+        for (int i = 0; i < jsonUrls.length(); i++) {
+            String url = jsonUrls.getString(i);
+            command.addUrl(url);
+        }
+        return command;
+    }
+
+    public static JSONArray listToJSON(List<Command> commands) throws JSONException {
+        JSONArray json = new JSONArray();
+        for (Command command: commands) {
+            json.put(command.toJSON());
+        }
+        return json;
+    }
+
+    public static List<Command> listFromJSON(JSONArray json) throws JSONException {
+        List<Command> commands = new ArrayList<>();
+        for (int i = 0; i < json.length(); i++) {
+            JSONObject jsonCommand = json.getJSONObject(i);
+            Command command = fromJSON(jsonCommand);
+            commands.add(command);
+        }
+        return commands;
+    }
+
+    public static String listToString(List<Command> commands) {
+        try {
+            JSONArray json = listToJSON(commands);
+            String result = json.toString(2);
+            return result;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<Command> listFromString(String data) {
+        try {
+            JSONArray json = new JSONArray(data);
+            return listFromJSON(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 }

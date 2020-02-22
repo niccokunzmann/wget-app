@@ -4,19 +4,13 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import eu.quelltext.wget.R;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /*
   Base class for different options.
  */
-public class Option implements Parcelable {
-
-    public static Option VERSION = new BinaryOption("--version", R.string.command_name_version, R.string.command_explanation_version);
-    public static Option CONTINUE = new BinaryOption("--continue", R.string.command_name_continue, R.string.command_explanation_continue);
-    public static Option RECURSIVE = new BinaryOption("--recursive", R.string.command_name_recursive, R.string.command_explanation_recursive);
-    public static Option MIRROR = new BinaryOption("--mirror", R.string.command_name_mirror, R.string.command_explanation_mirror);
-    public static Option DEBUG = new BinaryOption("--debug", R.string.command_name_debug, R.string.command_explanation_debug);
-    public static ArgumentOptionBuilder OUTPUT = new ArgumentOptionBuilder("-O", R.string.command_name_output_document, R.string.command_explanation_output_document);
+public class Option implements Parcelable, Options.Manual.ManualEntry {
 
     protected Option() {
     }
@@ -34,8 +28,10 @@ public class Option implements Parcelable {
                 return new BinaryOption(in);
             } if (name.equals(ArgumentOptionBuilder.ArgumentOption.class.getName())){
                 return new ArgumentOptionBuilder.ArgumentOption(in);
+            } if (name.equals(Unrecorded.class.getName())){
+                return new Unrecorded(in);
             }
-            return new Unknown(in);
+            return new Unknown();
         }
 
         @Override
@@ -43,6 +39,27 @@ public class Option implements Parcelable {
             return new Option[size];
         }
     };
+
+    public static Option fromJSON(JSONObject jsonOption) throws JSONException {
+        return Options.MANUAL.optionFromJSON(jsonOption);
+    }
+
+    public Option fromManualJSON(JSONObject jsonOption) {
+        return new Unknown();
+    }
+
+    @Override
+    public String manualId() {
+        return "";
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        return Options.MANUAL.toJSON(this);
+    }
+
+    public void toJSON(JSONObject json) throws JSONException {
+        // write an option to json, the id is already saved
+    }
 
     @Override
     public int describeContents() {
@@ -63,13 +80,39 @@ public class Option implements Parcelable {
     }
 
     static class Unknown extends Option {
-        public Unknown(Parcel in) {
-            super(in);
-        }
-
         @Override
         public String toShortText(Context context) {
             return "unknown";
         }
+
+        @Override
+        public String manualId() {
+            return "unknown";
+        }
     }
+
+    static class Unrecorded extends Option {
+        private final String id;
+
+        public Unrecorded(Parcel in) {
+            super(in);
+            id = in.readString();
+        }
+
+        public Unrecorded(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public String manualId() {
+            return id;
+        }
+
+        @Override
+        public String toShortText(Context context) {
+            return id;
+        }
+    }
+
+
 }

@@ -3,7 +3,13 @@ package eu.quelltext.wget.bin.wget;
 import android.content.Context;
 import android.os.Parcel;
 
-class ArgumentOptionBuilder {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+class ArgumentOptionBuilder implements Options.Manual.ManualEntry {
+
+    private static final String JSON_ARGUMENT = "argument";
+
     private final String cmd;
     private final int nameId;
     private final int explanationId;
@@ -17,6 +23,18 @@ class ArgumentOptionBuilder {
 
     public ArgumentOption to(String argument) {
         return new ArgumentOption(this.cmd, this.nameId, this.explanationId, argument);
+    }
+
+    @Override
+    public Option fromManualJSON(JSONObject json) throws JSONException {
+        String argument = json.getString(JSON_ARGUMENT);
+        Option option = new ArgumentOption(cmd, nameId, explanationId, argument);
+        return option;
+    }
+
+    @Override
+    public String manualId() {
+        return cmd;
     }
 
     public static class ArgumentOption extends eu.quelltext.wget.bin.wget.Option {
@@ -56,6 +74,12 @@ class ArgumentOptionBuilder {
         @Override
         public String toShortText(Context context) {
             return context.getResources().getString(nameId);
+        }
+
+        @Override
+        public void toJSON(JSONObject json) throws JSONException {
+            super.toJSON(json);
+            json.put(JSON_ARGUMENT, argument);
         }
     }
 }

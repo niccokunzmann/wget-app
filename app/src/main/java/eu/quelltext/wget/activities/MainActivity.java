@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -22,7 +23,13 @@ import eu.quelltext.wget.bin.wget.Command;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String PREFRENCES_COMMANDS = "commands";
+    static private String PREFERENCES = "preferences";
+
     private RecyclerView recyclerView;
+    private CommandsAdapter mAdapter;
+    private List<Command> commands;
+    private SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,22 +47,50 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        CommandsAdapter mAdapter = new CommandsAdapter();
+        mAdapter = new CommandsAdapter();
         recyclerView.setAdapter(mAdapter);
+
+        mPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE);
+        loadCommands();
+    }
+
+    private void loadCommands() {
+        String commandsString = mPrefs.getString(PREFRENCES_COMMANDS, null);
+        if (commandsString == null) {
+            commands = defaultCommands();
+        } else {
+            commands = Command.listFromString(commandsString);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private List<Command> defaultCommands() {
+        List<Command> commands = new ArrayList<>();
+        commands.add(Command.VERSION);
+        commands.add(Command.GET_IMAGE);
+        commands.add(Command.PORTAL_TO_STDOUT);
+        commands.add(Command.LOCALHOST_TO_STDOUT);
+        return commands;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        loadCommands();
     }
 
-    private List<Command> getCommands() {
-        ArrayList<Command> result = new ArrayList<>();
-        result.add(Command.VERSION);
-        result.add(Command.GET_IMAGE);
-        result.add(Command.PORTAL_TO_STDOUT);
-        result.add(Command.LOCALHOST_TO_STDOUT);
-        return result;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        storeCommands();
+    }
+
+    private void storeCommands() {
+        // see https://developer.android.com/reference/android/app/Activity.html#SavingPersistentState
+        // for persistent state
+        SharedPreferences.Editor ed = mPrefs.edit();
+        ed.putString(PREFRENCES_COMMANDS, Command.listToString(commands));
+        ed.commit();
     }
 
     class CommandsAdapter extends RecyclerView.Adapter {
@@ -104,8 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 root.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        List<Command> commands = getCommands();
-                        commands.remove(command);
+                        removeCommand(command);
                         return true;
                     }
                 });
@@ -133,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder_, int position) {
             CommandViewHolder holder = (CommandViewHolder)holder_;
-            Command command = getCommands().get(position);
+            Command command = commands.get(position);
             holder.display(command);
             if (position % 2 == 1) {
                 holder.odd();
@@ -144,8 +178,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            int count = getCommands().size();
+            int count = commands.size();
             return count;
         }
+    }
+
+    private void removeCommand(Command command) {
+        int index = commands.indexOf(command);
+        commands.remove(index);
+        // notify about removal https://stackoverflow.com/a/26645164/1320237
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void addCommand(Command command) {
+        commands.add(0, command);
+        mAdapter.notifyDataSetChanged();
     }
 }
