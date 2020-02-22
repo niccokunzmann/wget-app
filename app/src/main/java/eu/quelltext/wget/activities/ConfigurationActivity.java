@@ -2,11 +2,8 @@ package eu.quelltext.wget.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.ArraySet;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +23,14 @@ import eu.quelltext.wget.bin.wget.Options;
 public class ConfigurationActivity extends AppCompatActivity {
 
     public static final String ARG_COMMAND = "command";
-    private LinearLayout sections;
+    private LinearLayout sectionsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuration);
 
-        sections = findViewById(R.id.sections);
+        sectionsView = findViewById(R.id.sections);
 
         Section startup = new Section(R.string.section_title_startup);
         startup.odd();
@@ -57,8 +54,8 @@ public class ConfigurationActivity extends AppCompatActivity {
     private class Section {
 
         private final View root;
-        private final LinearLayout options;
-        private List<DisplayableOption> subsections = new ArrayList<>();
+        private final LinearLayout optionsView;
+        private List<DisplayableOption> options = new ArrayList<>();
 
         public Section(int title) {
             // dynamically inflate view
@@ -66,40 +63,40 @@ public class ConfigurationActivity extends AppCompatActivity {
             // not combining the views (false as second argument)
             // see https://www.bignerdranch.com/blog/understanding-androids-layoutinflater-inflate/
             root = LayoutInflater.from(ConfigurationActivity.this)
-                    .inflate(R.layout.section, sections, false);
+                    .inflate(R.layout.section, sectionsView, false);
             TextView titleText = root.findViewById(R.id.title);
             titleText.setText(title);
 
-            options = root.findViewById(R.id.options);
-            options.setVisibility(View.GONE);
+            optionsView = root.findViewById(R.id.options);
+            optionsView.setVisibility(View.GONE);
             updateEditImage();
 
             View header = root.findViewById(R.id.header);
             header.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    options.setVisibility(options.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                    optionsView.setVisibility(optionsView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                     createOptions();
                     updateEditImage();
                 }
             });
             // how to add a view
             // see https://stackoverflow.com/a/4203731/1320237
-            sections.addView(root);
+            sectionsView.addView(root);
         }
 
         private void createOptions() {
-            for (DisplayableOption option: subsections) {
+            for (DisplayableOption option: options) {
                 display(option);
             }
-            subsections = new ArrayList<>();
+            options = new ArrayList<>();
         }
 
         private void updateEditImage() {
             // set a drawable from another package
             // see https://stackoverflow.com/a/7815835/1320237
             Drawable d = getResources().getDrawable(
-                    options.getVisibility() == View.GONE ?
+                    optionsView.getVisibility() == View.GONE ?
                             android.R.drawable.ic_menu_edit :
                             android.R.drawable.ic_menu_close_clear_cancel);
             ImageView editImage = root.findViewById(R.id.edit_image);
@@ -107,7 +104,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         }
 
         public void add(DisplayableOption option) {
-            subsections.add(option);
+            options.add(option);
         }
 
         private void display(DisplayableOption option) {
@@ -125,25 +122,24 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         class OptionBuilder implements DisplayableOption.Display {
 
-            private final View view;
-
-            private Set<Integer> hide = new HashSet<>();
+            private final View optionView;
+            private Set<Integer> hideViewsWithIds = new HashSet<>();
 
             private OptionBuilder() {
                 // dynamically inflate view
                 // https://stackoverflow.com/a/6070631/1320237
-                view = LayoutInflater.from(ConfigurationActivity.this)
-                        .inflate(R.layout.option, options, false);
-                hide.add(R.id.title);
-                hide.add(R.id.toggle);
-                hide.add(R.id.number);
-                hide.add(R.id.file);
-                hide.add(R.id.explanation);
+                optionView = LayoutInflater.from(ConfigurationActivity.this)
+                        .inflate(R.layout.option, optionsView, false);
+                hideViewsWithIds.add(R.id.title);
+                hideViewsWithIds.add(R.id.toggle);
+                hideViewsWithIds.add(R.id.number);
+                hideViewsWithIds.add(R.id.file);
+                hideViewsWithIds.add(R.id.explanation);
             }
 
             public <T extends View> T showView(int id) {
-                hide.remove(id);
-                return view.findViewById(id);
+                hideViewsWithIds.remove(id);
+                return optionView.findViewById(id);
             }
 
             public void setText(int viewId, int textId) {
@@ -182,16 +178,16 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
             public void done() {
-                for (int id: hide) {
+                for (int id: hideViewsWithIds) {
                     // remove a child from the parent view
                     // see https://stackoverflow.com/a/6538694/1320237
-                    View hiddenView = view.findViewById(id);
+                    View hiddenView = optionView.findViewById(id);
                     ViewGroup parent = (ViewGroup) hiddenView.getParent();
                     parent.removeView(hiddenView);
                 }
                 // how to add a view
                 // see https://stackoverflow.com/a/4203731/1320237
-                options.addView(view);
+                optionsView.addView(optionView);
             }
         }
     }
