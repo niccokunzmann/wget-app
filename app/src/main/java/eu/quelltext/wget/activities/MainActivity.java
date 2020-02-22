@@ -63,15 +63,15 @@ public class MainActivity extends AppCompatActivity {
         class CommandViewHolder extends RecyclerView.ViewHolder {
 
             private final Button buttonRun;
-            private final Button buttonEdit;
             private final TextView rightText;
             private final TextView bottomText;
             private final View background;
+            private final View root;
 
             public CommandViewHolder(@NonNull View root) {
                 super(root);
+                this.root = root;
                 buttonRun = root.findViewById(R.id.button_run);
-                buttonEdit = root.findViewById(R.id.button_edit);
                 rightText = root.findViewById(R.id.text_right);
                 bottomText = root.findViewById(R.id.text_bottom);
                 background = root.findViewById(R.id.background);
@@ -100,6 +100,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                     rightText.setText(command.getOptionsText(MainActivity.this));
                 }
+
+                root.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        List<Command> commands = getCommands();
+                        commands.remove(command);
+                        return true;
+                    }
+                });
             }
 
             public void odd() {
