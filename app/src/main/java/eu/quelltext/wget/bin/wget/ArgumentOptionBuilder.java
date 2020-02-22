@@ -37,6 +37,13 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
     }
 
     @Override
+    public void fillWith(Display display, Option option) {
+        display.switchOn();
+        String argument = option.getArgument();
+        displayStrategy.setArgumentIn(display, argument);
+    }
+
+    @Override
     public void displayIn(Display section) {
         section.addSwitch();
         section.addTitle(this.nameId);
@@ -47,13 +54,20 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
     public interface DisplayStrategy{
 
         void displayIn(Display section);
+
+        void setArgumentIn(Display display, String argument);
     }
 
     public static final DisplayStrategy INTEGER = new DisplayStrategy() {
 
         @Override
-        public void displayIn(Display section) {
-            section.addIntegerField();
+        public void displayIn(Display display) {
+            display.addNumber();
+        }
+
+        @Override
+        public void setArgumentIn(Display display, String argument) {
+            display.setNumber(Integer.parseInt(argument));
         }
     };
     public static final DisplayStrategy FILE = new DisplayStrategy() {
@@ -61,6 +75,11 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
         @Override
         public void displayIn(Display section) {
             section.addFileDialog();
+        }
+
+        @Override
+        public void setArgumentIn(Display display, String argument) {
+            display.setFile(argument);
         }
     };
 }

@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -124,7 +125,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             option.displayIn(builder);
             Option prefilledOption = command.getOptionWithId(option.manualId());
             if (prefilledOption != null) {
-                prefilledOption.fill(builder);
+                option.fillWith(builder, prefilledOption);
             }
             builder.done();
         }
@@ -141,6 +142,8 @@ public class ConfigurationActivity extends AppCompatActivity {
             private final View optionView;
             private Switch toggle;
             private Set<Integer> hideViewsWithIds = new HashSet<>();
+            private EditText numberView;
+            private TextView fileView;
 
             private OptionBuilder() {
                 // dynamically inflate view
@@ -192,18 +195,28 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void addIntegerField() {
-                showView(R.id.number);
+            public void addNumber() {
+                numberView = showView(R.id.number);
             }
 
             @Override
             public void addFileDialog() {
-                showView(R.id.file);
+                fileView = showView(R.id.file);
             }
 
             @Override
             public void switchOn() {
                 toggle.setChecked(true);
+            }
+
+            @Override
+            public void setNumber(int i) {
+                numberView.setText(Integer.toString(i));
+            }
+
+            @Override
+            public void setFile(String argument) {
+                fileView.setText(argument);
             }
 
             public void done() {

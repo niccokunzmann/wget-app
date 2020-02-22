@@ -84,8 +84,13 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
         section.invalid();
     }
 
-    public void fill(Display display) {
+    public void fillWith(Display display, Option option) {
         display.switchOn();
+    }
+
+    /* return the argument if the option has one */
+    public String getArgument() {
+        return null;
     }
 
     static class Unknown extends Option {

@@ -57,8 +57,7 @@ public class ArgumentOption extends Option {
     }
 
     @Override
-    public void fill(Display display) {
-        super.fill(display);
-
+    public String getArgument() {
+        return argument;
     }
 }
