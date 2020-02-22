@@ -7,8 +7,6 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import eu.quelltext.wget.activities.ConfigurationActivity;
-
 /*
   Base class for different options.
  */
@@ -28,8 +26,8 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
                 return new Option(in);
             } if (name.equals(BinaryOption.class.getName())){
                 return new BinaryOption(in);
-            } if (name.equals(ArgumentOptionBuilder.ArgumentOption.class.getName())){
-                return new ArgumentOptionBuilder.ArgumentOption(in);
+            } if (name.equals(ArgumentOption.class.getName())){
+                return new ArgumentOption(in);
             } if (name.equals(Unrecorded.class.getName())){
                 return new Unrecorded(in);
             }
