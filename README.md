@@ -1,8 +1,8 @@
-# wget-app
+# wget for Android
 
 ![Android CI](https://github.com/niccokunzmann/wget-app/workflows/Android%20CI/badge.svg?branch=master)
 
-Android App to download and mirror web pages
+Android App to download and mirror web pages using the GNU Wget command.
 
 ## Development
 
