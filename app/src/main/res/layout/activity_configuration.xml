@@ -43,6 +43,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/urls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/sections"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

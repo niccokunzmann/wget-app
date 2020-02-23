@@ -11,11 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +40,8 @@ public class ConfigurationActivity extends AppCompatActivity {
     private List<OptionValue> optionValues;
     private Set<Option> skipOptionsOnSave = new HashSet<>();
     private List<String> urls = new ArrayList<>();
+    private LinearLayout urlsView;
+    private List<UrlView> urlViews = new ArrayList<>();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -90,6 +95,13 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
         });
 
+        urlsView = findViewById(R.id.urls);
+        for (String url: command.getUrls()) {
+            new UrlView(url).add();
+        }
+        if (command.getUrls().size() == 0) {
+            new UrlView("").add();
+        }
     }
 
     private Command saveCommandAndExit() {
@@ -104,6 +116,11 @@ public class ConfigurationActivity extends AppCompatActivity {
         }
         for (String url : urls) {
             command.addUrl(url);
+        }
+        for (UrlView urlView : urlViews) {
+            if (urlView.isValid()) {
+                command.addUrl(urlView.getUrl());
+            }
         }
         // return command to calling activity
         // see https://stackoverflow.com/a/947560/1320237
@@ -316,5 +333,82 @@ public class ConfigurationActivity extends AppCompatActivity {
     }
     interface OptionValue {
         void save(Command command);
+    }
+
+    private class UrlView {
+        private final View root;
+        private final EditText text;
+
+        private UrlView(String url) {
+            // dynamically inflate view
+            // https://stackoverflow.com/a/6070631/1320237
+            root = LayoutInflater.from(ConfigurationActivity.this)
+                    .inflate(R.layout.section_url_entry, urlsView, false);
+            text = root.findViewById(R.id.url);
+            text.setText(url);
+            text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean b) {
+                    if (!b) {
+                        text.setText(getUrl());
+                    }
+                }
+            });
+            ImageButton deleteButton = root.findViewById(R.id.delete);
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    remove();
+                }
+            });
+            ImageButton addButton = root.findViewById(R.id.add);
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new UrlView("").add(urlViews.indexOf(UrlView.this) + 1);
+                }
+            });
+        }
+
+        public String getUrl() {
+            String url = text.getText().toString();
+            if (!url.contains("://")) {
+                url = "http://" + url;
+            }
+            return url;
+        }
+
+        public boolean isValid() {
+            if (getUrl().isEmpty()) {
+                return false;
+            }
+            try {
+                URL url = new URL(getUrl());
+                return !url.getHost().isEmpty();
+            } catch (MalformedURLException e) {
+                return false;
+            }
+        }
+
+        public void add() {
+            urlsView.addView(root);
+            urlViews.add(this);
+        }
+
+        public void remove() {
+            if (urlViews.size() == 1) {
+                text.setText("");
+            } else {
+                urlsView.removeView(root);
+                urlViews.remove(this);
+            }
+        }
+
+        private void add(int index) {
+            urlsView.addView(root, index);
+            urlViews.add(index,this);
+            text.requestFocus();
+        }
+
     }
 }

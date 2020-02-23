@@ -132,4 +132,5 @@
     <string name="command_name_depth">depth</string>
     <string name="command_explanation_depth">Specify recursion maximum depth level depth.</string>
     <string name="invalid_option">The app has an error and displays an invalid option here.</string>
+    <string name="url_hint">http://www.gnu.org</string>
 </resources>
