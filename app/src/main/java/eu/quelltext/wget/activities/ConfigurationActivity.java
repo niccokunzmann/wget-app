@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import eu.quelltext.wget.R;
 import eu.quelltext.wget.bin.wget.Command;
@@ -40,6 +43,42 @@ public class ConfigurationActivity extends AppCompatActivity {
     public static final String RESULT_COMMAND = "command";
     private static final int ACTIVITY_CHOOSE_FILE = 0;
     private static final int ACTIVITY_CHOOSE_DIRECTORY = 1;
+
+    // white space matching in regex
+    // from https://stackoverflow.com/a/4731164/1320237
+    private static final String WHITESPACE_CHARS =  ""       /* dummy empty string for homogeneity */
+            + "\\u0009" // CHARACTER TABULATION
+            + "\\u000A" // LINE FEED (LF)
+            + "\\u000B" // LINE TABULATION
+            + "\\u000C" // FORM FEED (FF)
+            + "\\u000D" // CARRIAGE RETURN (CR)
+            + "\\u0020" // SPACE
+            + "\\u0085" // NEXT LINE (NEL)
+            + "\\u00A0" // NO-BREAK SPACE
+            + "\\u1680" // OGHAM SPACE MARK
+            + "\\u180E" // MONGOLIAN VOWEL SEPARATOR
+            + "\\u2000" // EN QUAD
+            + "\\u2001" // EM QUAD
+            + "\\u2002" // EN SPACE
+            + "\\u2003" // EM SPACE
+            + "\\u2004" // THREE-PER-EM SPACE
+            + "\\u2005" // FOUR-PER-EM SPACE
+            + "\\u2006" // SIX-PER-EM SPACE
+            + "\\u2007" // FIGURE SPACE
+            + "\\u2008" // PUNCTUATION SPACE
+            + "\\u2009" // THIN SPACE
+            + "\\u200A" // HAIR SPACE
+            + "\\u2028" // LINE SEPARATOR
+            + "\\u2029" // PARAGRAPH SEPARATOR
+            + "\\u202F" // NARROW NO-BREAK SPACE
+            + "\\u205F" // MEDIUM MATHEMATICAL SPACE
+            + "\\u3000" // IDEOGRAPHIC SPACE
+            ;
+    /* A \s that actually works for Java’s native character set: Unicode */
+    private static final String     WHITESPACE_CHAR_CLASS = "["  + WHITESPACE_CHARS + "]";
+    /* A \S that actually works for  Java’s native character set: Unicode */
+    private static final String NON_WHITESPACE_CHAR_CLASS = "[^" + WHITESPACE_CHAR_CLASS + "]";
+    private static final Pattern URL_PATTERN = Pattern.compile("(https?|ftp)://" + NON_WHITESPACE_CHAR_CLASS + "+");;
 
     private LinearLayout sectionsView;
     private Command command;
@@ -58,17 +97,55 @@ public class ConfigurationActivity extends AppCompatActivity {
         // get parcelable from intent https://stackoverflow.com/a/7181792/1320237
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+
+        // create the command
         command = extras.getParcelable(ARG_COMMAND);
         if (command == null) {
             // activity is opened by an intent
             // see https://stackoverflow.com/a/9637366/1320237
             command = new Command();
-            Uri data = getIntent().getData();
-            if (data != null) {
-                String url = data.toString();
-                command.addUrl(url);
+        }
+
+        // add urls to command
+        Set<String> urls = new HashSet<>();
+        // add data url
+        Uri data = intent.getData();
+        if (data != null) {
+            String url = data.toString();
+            urls.add(url);
+        }
+        // add extra text urls
+        List<String> texts = new ArrayList<>();
+        String extraText = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (extraText != null) {
+            texts.add(extraText);
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            // add clip urls
+            ClipData clip = intent.getClipData();
+            if (clip != null) {
+                for (int i = 0; i < clip.getItemCount(); i ++) {
+                    ClipData.Item item = clip.getItemAt(i);
+                    String text = item.getText().toString();
+                    texts.add(text);
+                }
             }
         }
+        // filter text for urls
+        for (String text: texts) {
+            Matcher m = URL_PATTERN.matcher(text);
+            while(m.find()) {
+                String url = m.group();
+                if (!urls.contains(url)) {
+                    urls.add(url);
+                }
+            }
+        }
+        // add urls to command
+        for (String url: urls) {
+            command.addUrl(url);
+        }
+
         sectionsView = findViewById(R.id.sections);
 
         optionValues = new ArrayList<>();
