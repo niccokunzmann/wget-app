@@ -59,6 +59,16 @@ public class ConfigurationActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         command = extras.getParcelable(ARG_COMMAND);
+        if (command == null) {
+            // activity is opened by an intent
+            // see https://stackoverflow.com/a/9637366/1320237
+            command = new Command();
+            Uri data = getIntent().getData();
+            if (data != null) {
+                String url = data.toString();
+                command.addUrl(url);
+            }
+        }
         sectionsView = findViewById(R.id.sections);
 
         optionValues = new ArrayList<>();
