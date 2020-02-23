@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import eu.quelltext.wget.R;
 
@@ -43,11 +44,13 @@ public class Executable {
         private final Process process;
         private final DataOutputStream output;
         private final DataInputStream input;
+        private byte[] outputBytes;
 
         public ExecutionResult(Process process, DataOutputStream os, DataInputStream is) {
             this.process = process;
             this.output = os;
             this.input = is;
+            outputBytes = new byte[]{};
         }
 
         public void waitFor() throws InterruptedException {
@@ -56,8 +59,17 @@ public class Executable {
 
         public String getOutput() throws IOException {
             // input stream to array, see https://stackoverflow.com/a/1264756/1320237
-            byte[] bytes = IOUtils.toByteArray(input);
-            return new String(bytes);
+            int available = input.available();
+            if (available > 0) {
+                byte[] newData = new byte[available];
+                int read = input.read(newData);
+                if (read != available) {
+                    // copy range, see https://stackoverflow.com/a/11001759/1320237
+                    newData = Arrays.copyOf(newData, read);
+                }
+                outputBytes = ArrayUtils.addAll(outputBytes, newData);
+            }
+            return new String(outputBytes);
         }
 
         private final int[] ERROR_CODE_STRINGS = new int[]{
