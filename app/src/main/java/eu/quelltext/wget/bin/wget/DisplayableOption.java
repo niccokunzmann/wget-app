@@ -17,7 +17,7 @@ public interface DisplayableOption {
         void addExplanation(int explanationId);
         void addSwitch();
         void addNumber();
-        void addFileDialog();
+        void addFileDialog(String file);
         void switchOn();
         void setNumber(String argument);
         void setPath(String argument);

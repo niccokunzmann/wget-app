@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -69,20 +67,25 @@ public class ConfigurationActivity extends AppCompatActivity {
         startup.add(Options.VERSION);
         startup.add(Options.HELP);
 
+        Section logging = new Section(R.string.section_title_logging);
+        logging.even();
+        logging.add(Options.OUTPUT_FILE);
+        logging.add(Options.APPEND_OUTPUT);
+
         Section download = new Section(R.string.section_title_download);
-        download.even();
+        download.odd();
         download.add(Options.TRIES);
-        download.add(Options.OUTPUT);
+        download.add(Options.OUTPUT_DOCUMENT);
         download.add(Options.CONTINUE);
 
         Section recursive = new Section(R.string.section_title_recursive);
-        recursive.odd();
+        recursive.even();
         recursive.add(Options.RECURSIVE);
         recursive.add(Options.DEPTH);
         recursive.add(Options.MIRROR);
 
         Section directory = new Section(R.string.section_title_directory);
-        directory.even();
+        directory.odd();
         directory.add(Options.DIRECTORY_PREFIX);
 
         Button buttonRun = findViewById(R.id.run);
@@ -254,7 +257,7 @@ public class ConfigurationActivity extends AppCompatActivity {
                 hideViewsWithIds.add(R.id.number);
                 hideViewsWithIds.add(R.id.file);
                 hideViewsWithIds.add(R.id.openFile);
-                hideViewsWithIds.add(R.id.to_output);
+                hideViewsWithIds.add(R.id.default_path);
                 hideViewsWithIds.add(R.id.explanation);
             }
 
@@ -300,7 +303,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void addFileDialog() {
+            public void addFileDialog(final String path) {
                 fileView = showView(R.id.file);
                 ImageButton openFile = showView(R.id.openFile);
                 View.OnClickListener click = new View.OnClickListener() {
@@ -316,14 +319,14 @@ public class ConfigurationActivity extends AppCompatActivity {
                     }
                 };
                 openFile.setOnClickListener(click);
-                fileView.setOnClickListener(click);
-                Button toOutput = showView(R.id.to_output);
-                toOutput.setOnClickListener(new View.OnClickListener() {
+                ImageButton defaultPath = showView(R.id.default_path);
+                defaultPath.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        setPath("-");
+                        setPath(path);
                     }
                 });
+                setPath(path);
             }
 
             @Override
@@ -352,11 +355,9 @@ public class ConfigurationActivity extends AppCompatActivity {
                     }
                 };
                 openFile.setOnClickListener(click);
-                fileView.setOnClickListener(click);
-                Button toOutput = showView(R.id.to_output);
+                ImageButton defaultPath = showView(R.id.default_path);
                 final String downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-                toOutput.setText(R.string.directory_downloads);
-                toOutput.setOnClickListener(new View.OnClickListener() {
+                defaultPath.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         // from https://stackoverflow.com/a/7908446/1320237

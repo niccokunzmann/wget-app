@@ -2,12 +2,8 @@ package eu.quelltext.wget.bin.wget;
 
 import android.Manifest;
 import android.content.Context;
-import android.graphics.Path;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import androidx.annotation.RequiresApi;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
@@ -16,11 +12,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.StringJoiner;
 
-import eu.quelltext.wget.activities.MainActivity;
 import eu.quelltext.wget.bin.BinaryAccess;
 import eu.quelltext.wget.bin.Executable;
 
@@ -36,8 +29,8 @@ public class Command implements Parcelable {
 
     public static final Command VERSION = new Command().addOption(Options.VERSION);
     public static final Command GET_IMAGE = new Command().addOption(Options.DEBUG).addUrl(EXAMPLE_IMAGE_URL);
-    public static final Command PORTAL_TO_STDOUT = new Command().addOption(Options.OUTPUT.to("-")).addUrl(EXAMPLE_PORTAL_URL);
-    public static final Command LOCALHOST_TO_STDOUT = new Command().addOption(Options.OUTPUT.to("-")).addUrl(EXAMPLE_LOCALHOST_URL);
+    public static final Command PORTAL_TO_STDOUT = new Command().addOption(Options.OUTPUT_DOCUMENT.to("-")).addUrl(EXAMPLE_PORTAL_URL);
+    public static final Command LOCALHOST_TO_STDOUT = new Command().addOption(Options.OUTPUT_DOCUMENT.to("-")).addUrl(EXAMPLE_LOCALHOST_URL);
 
     public static Command newDefault() {
         return new Command();

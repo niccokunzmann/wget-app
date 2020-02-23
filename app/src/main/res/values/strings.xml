@@ -143,4 +143,9 @@
     <string name="invite_to_install_io_file_manager">You can choose directories using the IO Filemanager. Please download and install it to use this functionality.</string>
     <string name="explain_permission">In order for this command to work, we need permission to access parts of your device.</string>
     <string name="waiting_for_permissions">The execution of the command is deferred until the permissions are reviwed by the user.</string>
+    <string name="command_name_output_file">log file</string>
+    <string name="command_explanation_output_file">Log all messages to logfile. The messages are normally reported to standard error. With /proc/self/fd/1, you can read the log in this app.</string>
+    <string name="command_name_append_output">append output</string>
+    <string name="command_explanation_append_output">Append to logfile. This is the same as log file, only it appends to logfile instead of overwriting the old log file. If logfile does not exist, a new file is created.</string>
+    <string name="section_title_logging">Logging and Input File Options</string>
 </resources>

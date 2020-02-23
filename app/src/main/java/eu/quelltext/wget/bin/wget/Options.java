@@ -1,16 +1,11 @@
 package eu.quelltext.wget.bin.wget;
 
-import android.graphics.Path;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import eu.quelltext.wget.R;
-import eu.quelltext.wget.activities.MainActivity;
 
 public class Options {
 
@@ -24,7 +19,10 @@ public class Options {
     public static final Option MIRROR = addBinary("--mirror", R.string.command_name_mirror, R.string.command_explanation_mirror);
     public static final Option DEBUG = addBinary("--debug", R.string.command_name_debug, R.string.command_explanation_debug);
 
-    public static final ArgumentOptionBuilder OUTPUT = addFileArgument("-O", R.string.command_name_output_document, R.string.command_explanation_output_document);
+    public static final ArgumentOptionBuilder OUTPUT_DOCUMENT = addFileArgument("-O", R.string.command_name_output_document, R.string.command_explanation_output_document, "-");
+    // using /proc/self/fd/1 for stdout, see https://stackoverflow.com/a/24598112/1320237
+    public static final ArgumentOptionBuilder OUTPUT_FILE = addFileArgument("--output-file", R.string.command_name_output_file, R.string.command_explanation_output_file, "/proc/self/fd/1");
+    public static final ArgumentOptionBuilder APPEND_OUTPUT = addFileArgument("--append-output", R.string.command_name_append_output, R.string.command_explanation_append_output, "/proc/self/fd/1");
     public static final ArgumentOptionBuilder DIRECTORY_PREFIX = addDirectoryArgument("--directory-prefix", R.string.command_name_directory_prefix, R.string.command_explanation_directory_prefix);
     public static final ArgumentOptionBuilder TRIES = addIntArgument("--tries", R.string.command_name_tries, R.string.command_explanation_tries);
     public static final ArgumentOptionBuilder DEPTH = addIntArgument("-l", R.string.command_name_depth, R.string.command_explanation_depth);
@@ -32,8 +30,8 @@ public class Options {
     private static ArgumentOptionBuilder addIntArgument(String id, int name, int text) {
         return addArgument(id, name, text, ArgumentOptionBuilder.INTEGER);
     }
-    private static ArgumentOptionBuilder addFileArgument(String id, int name, int text) {
-        return addArgument(id, name, text, ArgumentOptionBuilder.FILE);
+    private static ArgumentOptionBuilder addFileArgument(String id, int name, int text, String file) {
+        return addArgument(id, name, text, ArgumentOptionBuilder.FILE(file));
     }
 
     private static ArgumentOptionBuilder addDirectoryArgument(String id, int name, int text) {

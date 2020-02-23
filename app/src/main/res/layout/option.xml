@@ -28,12 +28,11 @@
             android:layout_weight="0"
             app:srcCompat="@android:drawable/ic_menu_save" />
 
-        <Button
-            android:id="@+id/to_output"
+        <ImageButton
+            android:id="@+id/default_path"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/option_output"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:src="@android:drawable/ic_menu_revert" />
 
         <EditText
             android:id="@+id/number"

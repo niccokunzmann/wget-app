@@ -80,22 +80,23 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
         }
     };
 
-    public static final DisplayStrategy FILE = new DisplayStrategy() {
+    public static DisplayStrategy FILE(final String file){
+        return new DisplayStrategy() {
+            @Override
+            public void displayIn(Display section) {
+                section.addFileDialog(file);
+            }
 
-        @Override
-        public void displayIn(Display section) {
-            section.addFileDialog();
-        }
+            @Override
+            public void setArgumentIn(Display display, String argument) {
+                display.setPath(argument);
+            }
 
-        @Override
-        public void setArgumentIn(Display display, String argument) {
-            display.setPath(argument);
-        }
-
-        @Override
-        public String getArgument(Display display) {
-            return display.getPath();
-        }
+            @Override
+            public String getArgument(Display display) {
+                return display.getPath();
+            }
+        };
     };
 
     public static final DisplayStrategy DIRECTORY = new DisplayStrategy() {
