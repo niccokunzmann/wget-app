@@ -42,12 +42,12 @@ public class Command implements Parcelable {
         return new Command();
     }
 
-    private Command addUrl(String url) {
+    public Command addUrl(String url) {
         urls.add(url);
         return this;
     }
 
-    private Command addOption(Option option) {
+    public Command addOption(Option option) {
         options.add(option);
         return this;
     }

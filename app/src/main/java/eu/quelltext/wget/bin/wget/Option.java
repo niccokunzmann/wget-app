@@ -88,6 +88,11 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
         display.switchOn();
     }
 
+    @Override
+    public Option createNewFrom(Display builder) {
+        return this;
+    }
+
     /* return the argument if the option has one */
     public String getArgument() {
         return null;

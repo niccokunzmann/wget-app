@@ -2,13 +2,14 @@ package eu.quelltext.wget.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,11 +30,15 @@ import eu.quelltext.wget.bin.wget.Options;
 public class ConfigurationActivity extends AppCompatActivity {
 
     public static final String ARG_COMMAND = "command";
+    public static final String RESULT_COMMAND = "command";
+
     private LinearLayout sectionsView;
     private Command command;
+    private List<OptionValue> optionValues;
+    private List<String> urls = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuration);
 
@@ -41,10 +46,9 @@ public class ConfigurationActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         command = extras.getParcelable(ARG_COMMAND);
-
-
         sectionsView = findViewById(R.id.sections);
 
+        optionValues = new ArrayList<>();
         Section startup = new Section(R.string.section_title_startup);
         startup.odd();
         startup.add(Options.VERSION);
@@ -62,6 +66,52 @@ public class ConfigurationActivity extends AppCompatActivity {
         recursive.add(Options.DEPTH);
         recursive.add(Options.MIRROR);
 
+        Button buttonRun = findViewById(R.id.run);
+        buttonRun.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveCommandAndExit();
+                runCommand();
+            }
+        });
+        Button buttonSave = findViewById(R.id.save);
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveCommandAndExit();
+            }
+        });
+        Button buttonCancel = findViewById(R.id.cancel);
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+    }
+
+    private void saveCommandAndExit() {
+        command = new Command();
+        for (OptionValue value : optionValues) {
+            value.save(command);
+        }
+        for (String url : urls) {
+            command.addUrl(url);
+        }
+        // return command to calling activity
+        // see https://stackoverflow.com/a/947560/1320237
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(RESULT_COMMAND, command);
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
+    }
+
+    private void runCommand() {
+        // open a new activity, see https://stackoverflow.com/a/4186097/1320237
+        Intent myIntent = new Intent(this, CommandActivity.class);
+        myIntent.putExtra(CommandActivity.ARG_COMMAND, command); //Optional parameters
+        startActivity(myIntent);
     }
 
     private class Section {
@@ -120,14 +170,23 @@ public class ConfigurationActivity extends AppCompatActivity {
             options.add(option);
         }
 
-        private void display(DisplayableOption option) {
-            OptionBuilder builder = new OptionBuilder();
+        private void display(final DisplayableOption option) {
+            final OptionBuilder builder = new OptionBuilder();
             option.displayIn(builder);
             Option prefilledOption = command.getOptionWithId(option.manualId());
             if (prefilledOption != null) {
                 option.fillWith(builder, prefilledOption);
             }
             builder.done();
+            optionValues.add(new OptionValue(){
+                @Override
+                public void save(Command command) {
+                    if (builder.isSwitchedOn()) {
+                        Option savedOption = option.createNewFrom(builder);
+                        command.addOption(savedOption);
+                    }
+                }
+            });
         }
 
         public void odd() {
@@ -210,13 +269,23 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void setNumber(int i) {
-                numberView.setText(Integer.toString(i));
+            public void setNumber(String argument) {
+                numberView.setText(argument);
             }
 
             @Override
             public void setFile(String argument) {
                 fileView.setText(argument);
+            }
+
+            @Override
+            public String getNumber() {
+                return numberView.getText().toString();
+            }
+
+            @Override
+            public String getFile() {
+                return fileView.getText().toString();
             }
 
             public void done() {
@@ -231,6 +300,13 @@ public class ConfigurationActivity extends AppCompatActivity {
                 // see https://stackoverflow.com/a/4203731/1320237
                 optionsView.addView(optionView);
             }
+
+            public boolean isSwitchedOn() {
+                return toggle != null && toggle.isChecked();
+            }
         }
+    }
+    interface OptionValue {
+        void save(Command command);
     }
 }

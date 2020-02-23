@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import eu.quelltext.wget.bin.wget.Command;
 public class MainActivity extends AppCompatActivity {
 
     private static final String PREFRENCES_COMMANDS = "commands";
+    private static final int ACTIVITY_CREATE_COMMAND = 0;
     static private String PREFERENCES = "preferences";
 
     private RecyclerView recyclerView;
@@ -207,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         // open a new activity, see https://stackoverflow.com/a/4186097/1320237
         Intent myIntent = new Intent(MainActivity.this, ConfigurationActivity.class);
         myIntent.putExtra(ConfigurationActivity.ARG_COMMAND, command); //Optional parameters
-        MainActivity.this.startActivity(myIntent);
+        MainActivity.this.startActivityForResult(myIntent, ACTIVITY_CREATE_COMMAND);
     }
 
     private void removeCommand(Command command) {
@@ -222,5 +224,21 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // save command as result from the activity
+        // see https://stackoverflow.com/a/13362722/1320237
+        switch(requestCode) {
+            case (ACTIVITY_CREATE_COMMAND) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    Command command = data.getParcelableExtra(ConfigurationActivity.RESULT_COMMAND);
+                    if (command != null) {
+                        addCommand(command);
+                    }
+                }
+                break;
+            }
+        }
+    }
 }

@@ -44,6 +44,11 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
     }
 
     @Override
+    public Option createNewFrom(Display display) {
+        return to(displayStrategy.getArgument(display));
+    }
+
+    @Override
     public void displayIn(Display section) {
         section.addSwitch();
         section.addTitle(this.nameId);
@@ -52,10 +57,9 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
     }
 
     public interface DisplayStrategy{
-
         void displayIn(Display section);
-
         void setArgumentIn(Display display, String argument);
+        String getArgument(Display display);
     }
 
     public static final DisplayStrategy INTEGER = new DisplayStrategy() {
@@ -67,7 +71,12 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
 
         @Override
         public void setArgumentIn(Display display, String argument) {
-            display.setNumber(Integer.parseInt(argument));
+            display.setNumber(argument);
+        }
+
+        @Override
+        public String getArgument(Display display) {
+            return display.getNumber();
         }
     };
     public static final DisplayStrategy FILE = new DisplayStrategy() {
@@ -80,6 +89,11 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
         @Override
         public void setArgumentIn(Display display, String argument) {
             display.setFile(argument);
+        }
+
+        @Override
+        public String getArgument(Display display) {
+            return display.getFile();
         }
     };
 }

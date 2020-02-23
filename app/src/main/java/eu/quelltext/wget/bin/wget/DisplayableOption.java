@@ -1,7 +1,5 @@
 package eu.quelltext.wget.bin.wget;
 
-import eu.quelltext.wget.activities.ConfigurationActivity;
-
 public interface DisplayableOption {
 
     void displayIn(Display section);
@@ -9,6 +7,8 @@ public interface DisplayableOption {
     String manualId();
 
     void fillWith(Display display, Option option);
+
+    Option createNewFrom(Display display);
 
     interface Display {
 
@@ -19,7 +19,9 @@ public interface DisplayableOption {
         void addNumber();
         void addFileDialog();
         void switchOn();
-        void setNumber(int i);
+        void setNumber(String argument);
         void setFile(String argument);
+        String getNumber();
+        String getFile();
     }
 }
