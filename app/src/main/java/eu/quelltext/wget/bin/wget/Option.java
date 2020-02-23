@@ -98,6 +98,14 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
         return null;
     }
 
+    public boolean readsExternalStorage() {
+        return false; //TODO: add input file option
+    }
+
+    public boolean revokesWritingToExternalStorage() {
+        return (manualId().equals("-O") || manualId().equals("--output-document")) && getArgument().equals("-");
+    }
+
     static class Unknown extends Option {
         @Override
         public String toShortText(Context context) {

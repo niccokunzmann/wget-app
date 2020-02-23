@@ -1,5 +1,6 @@
 package eu.quelltext.wget.bin.wget;
 
+import android.Manifest;
 import android.content.Context;
 import android.graphics.Path;
 import android.os.Build;
@@ -242,5 +243,20 @@ public class Command implements Parcelable {
             }
         }
         return null;
+    }
+
+    public List<String> getPermissions() {
+        List<String> permissions = new ArrayList<>();
+        permissions.add(Manifest.permission.INTERNET);
+        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        for (Option option: options) {
+            if (option.readsExternalStorage()) {
+                permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (option.revokesWritingToExternalStorage()) {
+                permissions.remove(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+        }
+        return permissions;
     }
 }

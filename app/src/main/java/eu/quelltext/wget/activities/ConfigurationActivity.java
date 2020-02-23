@@ -3,9 +3,13 @@ package eu.quelltext.wget.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +20,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -34,6 +40,8 @@ public class ConfigurationActivity extends AppCompatActivity {
 
     public static final String ARG_COMMAND = "command";
     public static final String RESULT_COMMAND = "command";
+    private static final int ACTIVITY_CHOOSE_FILE = 0;
+    private static final int ACTIVITY_CHOOSE_DIRECTORY = 1;
 
     private LinearLayout sectionsView;
     private Command command;
@@ -42,6 +50,7 @@ public class ConfigurationActivity extends AppCompatActivity {
     private List<String> urls = new ArrayList<>();
     private LinearLayout urlsView;
     private List<UrlView> urlViews = new ArrayList<>();
+    private Section.OptionBuilder reportPathTo = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -71,6 +80,10 @@ public class ConfigurationActivity extends AppCompatActivity {
         recursive.add(Options.RECURSIVE);
         recursive.add(Options.DEPTH);
         recursive.add(Options.MIRROR);
+
+        Section directory = new Section(R.string.section_title_directory);
+        directory.even();
+        directory.add(Options.DIRECTORY_PREFIX);
 
         Button buttonRun = findViewById(R.id.run);
         buttonRun.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +147,7 @@ public class ConfigurationActivity extends AppCompatActivity {
     private void runCommand(Command command) {
         // open a new activity, see https://stackoverflow.com/a/4186097/1320237
         Intent myIntent = new Intent(this, CommandActivity.class);
-        myIntent.putExtra(CommandActivity.ARG_COMMAND, this.command); //Optional parameters
+        myIntent.putExtra(CommandActivity.ARG_COMMAND, command); //Optional parameters
         startActivity(myIntent);
     }
 
@@ -227,7 +240,8 @@ public class ConfigurationActivity extends AppCompatActivity {
             private Switch toggle;
             private Set<Integer> hideViewsWithIds = new HashSet<>();
             private EditText numberView;
-            private TextView fileView;
+            private EditText fileView;
+            private boolean fileDialog = true;
 
             private OptionBuilder() {
                 // dynamically inflate view
@@ -239,6 +253,8 @@ public class ConfigurationActivity extends AppCompatActivity {
                 hideViewsWithIds.add(R.id.toggle);
                 hideViewsWithIds.add(R.id.number);
                 hideViewsWithIds.add(R.id.file);
+                hideViewsWithIds.add(R.id.openFile);
+                hideViewsWithIds.add(R.id.to_output);
                 hideViewsWithIds.add(R.id.explanation);
             }
 
@@ -286,6 +302,68 @@ public class ConfigurationActivity extends AppCompatActivity {
             @Override
             public void addFileDialog() {
                 fileView = showView(R.id.file);
+                ImageButton openFile = showView(R.id.openFile);
+                View.OnClickListener click = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // from https://stackoverflow.com/q/41193219/1320237
+                        Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+                        chooseFile.setType("*/*");// https://stackoverflow.com/a/41195531/1320237
+                        String title = getResources().getString(R.string.choose_a_file);
+                        Intent intent = Intent.createChooser(chooseFile, title);
+                        startActivityForResult(intent, ACTIVITY_CHOOSE_FILE);
+                        reportPathTo = OptionBuilder.this;
+                    }
+                };
+                openFile.setOnClickListener(click);
+                fileView.setOnClickListener(click);
+                Button toOutput = showView(R.id.to_output);
+                toOutput.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        setPath("-");
+                    }
+                });
+            }
+
+            @Override
+            public void addDirectoryDialog() {
+                fileView = showView(R.id.file);
+                ImageButton openFile = showView(R.id.openFile);
+                View.OnClickListener click = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // from https://github.com/mvbasov/lWS/blob/d945b4b5276ef8d0dba8072bfab6657464d8f0a3/app/src/main/java/net/basov/lws/PreferencesActivity.java#L85
+                        Intent intent = new Intent("org.openintents.action.PICK_DIRECTORY");
+                        String title = getResources().getString(R.string.choose_a_directory);
+                        intent.putExtra("org.openintents.extra.BUTTON_TEXT", title);
+                        try {
+                            startActivityForResult(intent, ACTIVITY_CHOOSE_DIRECTORY);
+                            reportPathTo = OptionBuilder.this;
+                        } catch (ActivityNotFoundException e) {
+                            Toast.makeText(ConfigurationActivity.this,
+                                    R.string.invite_to_install_io_file_manager,
+                                    Toast.LENGTH_LONG
+                            ).show();
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse("market://details?id=org.openintents.filemanager"));
+                            startActivity(i);
+                        }
+                    }
+                };
+                openFile.setOnClickListener(click);
+                fileView.setOnClickListener(click);
+                Button toOutput = showView(R.id.to_output);
+                final String downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
+                toOutput.setText(R.string.directory_downloads);
+                toOutput.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // from https://stackoverflow.com/a/7908446/1320237
+                        setPath(downloadDirectory);
+                    }
+                });
+                fileView.setText(downloadDirectory);
             }
 
             @Override
@@ -299,7 +377,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void setFile(String argument) {
+            public void setPath(String argument) {
                 fileView.setText(argument);
             }
 
@@ -309,7 +387,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
             @Override
-            public String getFile() {
+            public String getPath() {
                 return fileView.getText().toString();
             }
 
@@ -409,6 +487,17 @@ public class ConfigurationActivity extends AppCompatActivity {
             urlViews.add(index,this);
             text.requestFocus();
         }
+    }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) return;
+        if((requestCode == ACTIVITY_CHOOSE_DIRECTORY || requestCode == ACTIVITY_CHOOSE_FILE) && reportPathTo != null)
+        {
+            Uri uri = data.getData();
+            String path = uri.getPath();
+            int index = path.lastIndexOf(":");
+            path = path.substring(index + 1);
+            reportPathTo.setPath(path);
+        }
     }
 }

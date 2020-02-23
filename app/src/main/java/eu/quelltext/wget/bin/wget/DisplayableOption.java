@@ -20,8 +20,9 @@ public interface DisplayableOption {
         void addFileDialog();
         void switchOn();
         void setNumber(String argument);
-        void setFile(String argument);
+        void setPath(String argument);
         String getNumber();
-        String getFile();
+        String getPath();
+        void addDirectoryDialog();
     }
 }

@@ -25,6 +25,7 @@ public class Options {
     public static final Option DEBUG = addBinary("--debug", R.string.command_name_debug, R.string.command_explanation_debug);
 
     public static final ArgumentOptionBuilder OUTPUT = addFileArgument("-O", R.string.command_name_output_document, R.string.command_explanation_output_document);
+    public static final ArgumentOptionBuilder DIRECTORY_PREFIX = addDirectoryArgument("--directory-prefix", R.string.command_name_directory_prefix, R.string.command_explanation_directory_prefix);
     public static final ArgumentOptionBuilder TRIES = addIntArgument("--tries", R.string.command_name_tries, R.string.command_explanation_tries);
     public static final ArgumentOptionBuilder DEPTH = addIntArgument("-l", R.string.command_name_depth, R.string.command_explanation_depth);
 
@@ -33,6 +34,10 @@ public class Options {
     }
     private static ArgumentOptionBuilder addFileArgument(String id, int name, int text) {
         return addArgument(id, name, text, ArgumentOptionBuilder.FILE);
+    }
+
+    private static ArgumentOptionBuilder addDirectoryArgument(String id, int name, int text) {
+        return addArgument(id, name, text, ArgumentOptionBuilder.DIRECTORY);
     }
 
     private static ArgumentOptionBuilder addArgument(String id, int name, int text, ArgumentOptionBuilder.DisplayStrategy displayStrategy) {

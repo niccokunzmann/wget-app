@@ -79,6 +79,7 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
             return display.getNumber();
         }
     };
+
     public static final DisplayStrategy FILE = new DisplayStrategy() {
 
         @Override
@@ -88,12 +89,30 @@ class ArgumentOptionBuilder implements Options.Manual.ManualEntry, DisplayableOp
 
         @Override
         public void setArgumentIn(Display display, String argument) {
-            display.setFile(argument);
+            display.setPath(argument);
         }
 
         @Override
         public String getArgument(Display display) {
-            return display.getFile();
+            return display.getPath();
+        }
+    };
+
+    public static final DisplayStrategy DIRECTORY = new DisplayStrategy() {
+
+        @Override
+        public void displayIn(Display section) {
+            section.addDirectoryDialog();
+        }
+
+        @Override
+        public void setArgumentIn(Display display, String argument) {
+            display.setPath(argument);
+        }
+
+        @Override
+        public String getArgument(Display display) {
+            return display.getPath();
         }
     };
 }

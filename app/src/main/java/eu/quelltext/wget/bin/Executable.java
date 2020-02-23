@@ -1,12 +1,14 @@
 package eu.quelltext.wget.bin;
 
 import android.os.Build;
+import android.os.Environment;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import eu.quelltext.wget.R;
@@ -21,7 +23,8 @@ public class Executable {
     public Result run(String[] parameters) throws IOException {
         // concatenate two arrays, see https://stackoverflow.com/a/80559/1320237
         String[] command = ArrayUtils.addAll(new String[]{this.path}, parameters);
-        Process process = Runtime.getRuntime().exec(command);
+        File cwd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        Process process = Runtime.getRuntime().exec(command, null, cwd);
         DataOutputStream os = new DataOutputStream(process.getOutputStream());
         DataInputStream is = new DataInputStream(process.getInputStream());
         return new ExecutionResult(process, os, is);

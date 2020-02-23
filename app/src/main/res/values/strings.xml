@@ -133,4 +133,14 @@
     <string name="command_explanation_depth">Specify recursion maximum depth level depth.</string>
     <string name="invalid_option">The app has an error and displays an invalid option here.</string>
     <string name="url_hint">http://www.gnu.org</string>
+    <string name="choose_a_file">Choose a File</string>
+    <string name="option_output">app</string>
+    <string name="command_name_directory_prefix">directory prefix</string>
+    <string name="command_explanation_directory_prefix">Set directory prefix to prefix. The directory prefix is the directory where all other files and subdirectories will be saved to, i.e. the top of the retrieval tree. The default is . (the current directory).</string>
+    <string name="section_title_directory">Directory Options</string>
+    <string name="choose_a_directory">Choose a Directory</string>
+    <string name="directory_downloads">Downloads</string>
+    <string name="invite_to_install_io_file_manager">You can choose directories using the IO Filemanager. Please download and install it to use this functionality.</string>
+    <string name="explain_permission">In order for this command to work, we need permission to access parts of your device.</string>
+    <string name="waiting_for_permissions">The execution of the command is deferred until the permissions are reviwed by the user.</string>
 </resources>
