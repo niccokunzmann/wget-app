@@ -45,5 +45,9 @@ public class NullWget implements IWget {
         public int getReturnCodeStringId() {
             return R.string.command_result_0;
         }
+
+        @Override
+        public void kill() {
+        }
     }
 }

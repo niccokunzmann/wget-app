@@ -124,7 +124,8 @@ public class CommandActivity extends AppCompatActivity {
         // use a handler to update the gui
         // see http://www.mopri.de/2010/timertask-bad-do-it-the-android-way-use-a-handler/
         handler = new Handler();
-        handler.postDelayed(new RunGuiUpdate(), UPDATE_GUI_MILLIS);
+        RunGuiUpdate updatePoll = new RunGuiUpdate();
+        updatePoll.run();
     }
 
     private void runCommand() {
@@ -180,6 +181,10 @@ public class CommandActivity extends AppCompatActivity {
         public int getReturnCodeStringId() {
             return errorCodeId;
         }
+
+        @Override
+        public void kill() {
+        }
     }
 
     @Override
@@ -188,7 +193,11 @@ public class CommandActivity extends AppCompatActivity {
         if (permissionRequestsToReceive == 0) {
             runCommand();
         }
-
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        result.kill();
+    }
 }

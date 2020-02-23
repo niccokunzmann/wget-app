@@ -37,6 +37,8 @@ public class Executable {
         String getOutput() throws IOException;
 
         int getReturnCodeStringId();
+
+        void kill();
     }
 
     private static class ExecutionResult implements Result {
@@ -94,6 +96,19 @@ public class Executable {
                 return ERROR_CODE_STRINGS[code];
             }
             return R.string.command_result_unkonwn;
+        }
+
+        @Override
+        public void kill() {
+            process.destroy();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                try {
+                    process.wait(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                process.destroyForcibly();
+            }
         }
 
         public boolean isRunning() {
