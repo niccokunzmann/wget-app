@@ -1,0 +1,18 @@
+Wget unterstützt HTTP, HTTPS und FTP sowie Empfang durch HTTP-Proxies.
+
+Wget ist nicht interaktiv, was bedeutet, dass es im Hintergrund arbeiten kann,
+während der Nutzer nicht eingeloggt ist. Im Kontrast dazu verlangen die meisten
+Webbrowser die ständige Anwesenheit des Nutzers, was hinderlich ist, wenn man
+viele Daten runterladen möchte.
+
+Wget kann Linksin HTML-, XHTML- und CSS-Seiten folgen, um lokale Versionen von
+entfernten Webseiten zu schaffen, wobei die Verzeichnisstruktur der Originalseite
+abgebildet wird. Das wird machnmal als "rekursiver Download" bezeichnet.
+Während Wget das macht, respektiert es den Robot-Exclusion-Standard (/robots.txt).
+Wget kann angewiesen werden, die Links in den heruntergeladenen Dateien in Links
+umwandeln, die auf die lokalen Dateien zeigen, damit sie offline ansehen kann.
+
+Wget ist vorbereitet, robust über langsame und instabile Netzwerkverbindungen zu
+arbeiten: Wenn ein Download wegen eines Netzwerkproblems abbricht, wird es
+weiter versuchen, die gesamte Datei herunterzuladen. Wenn der Server es unterstützt,
+wird Wget den Download dort fortsetzen, wo er unterbrochen wurde.
