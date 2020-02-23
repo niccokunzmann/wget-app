@@ -35,6 +35,7 @@ public class ConfigurationActivity extends AppCompatActivity {
     private LinearLayout sectionsView;
     private Command command;
     private List<OptionValue> optionValues;
+    private Set<Option> skipOptionsOnSave = new HashSet<>();
     private List<String> urls = new ArrayList<>();
 
     @Override
@@ -70,8 +71,8 @@ public class ConfigurationActivity extends AppCompatActivity {
         buttonRun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveCommandAndExit();
-                runCommand();
+                Command command = saveCommandAndExit();
+                runCommand(command);
             }
         });
         Button buttonSave = findViewById(R.id.save);
@@ -91,8 +92,13 @@ public class ConfigurationActivity extends AppCompatActivity {
 
     }
 
-    private void saveCommandAndExit() {
-        command = new Command();
+    private Command saveCommandAndExit() {
+        Command command = new Command();
+        for (Option option: this.command.getOptions()) {
+            if (!skipOptionsOnSave.contains(option)) {
+                command.addOption(option);
+            }
+        }
         for (OptionValue value : optionValues) {
             value.save(command);
         }
@@ -105,12 +111,13 @@ public class ConfigurationActivity extends AppCompatActivity {
         resultIntent.putExtra(RESULT_COMMAND, command);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
+        return command;
     }
 
-    private void runCommand() {
+    private void runCommand(Command command) {
         // open a new activity, see https://stackoverflow.com/a/4186097/1320237
         Intent myIntent = new Intent(this, CommandActivity.class);
-        myIntent.putExtra(CommandActivity.ARG_COMMAND, command); //Optional parameters
+        myIntent.putExtra(CommandActivity.ARG_COMMAND, this.command); //Optional parameters
         startActivity(myIntent);
     }
 
@@ -176,6 +183,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             Option prefilledOption = command.getOptionWithId(option.manualId());
             if (prefilledOption != null) {
                 option.fillWith(builder, prefilledOption);
+                skipOptionsOnSave.add(prefilledOption);
             }
             builder.done();
             optionValues.add(new OptionValue(){

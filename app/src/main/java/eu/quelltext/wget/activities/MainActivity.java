@@ -26,7 +26,7 @@ import eu.quelltext.wget.bin.wget.Command;
 public class MainActivity extends AppCompatActivity {
 
     private static final String PREFRENCES_COMMANDS = "commands";
-    private static final int ACTIVITY_CREATE_COMMAND = 0;
+    private static final int ACTIVITY_EDIT_COMMAND = 0;
     static private String PREFERENCES = "preferences";
 
     private RecyclerView recyclerView;
@@ -209,19 +209,21 @@ public class MainActivity extends AppCompatActivity {
         // open a new activity, see https://stackoverflow.com/a/4186097/1320237
         Intent myIntent = new Intent(MainActivity.this, ConfigurationActivity.class);
         myIntent.putExtra(ConfigurationActivity.ARG_COMMAND, command); //Optional parameters
-        MainActivity.this.startActivityForResult(myIntent, ACTIVITY_CREATE_COMMAND);
+        startActivityForResult(myIntent, ACTIVITY_EDIT_COMMAND);
     }
 
     private void removeCommand(Command command) {
         int index = commands.indexOf(command);
         commands.remove(index);
         // notify about removal https://stackoverflow.com/a/26645164/1320237
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemRemoved(index);
+        storeCommands();
     }
 
     private void addCommand(Command command) {
         commands.add(0, command);
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemInserted(0);
+        storeCommands();
     }
 
     @Override
@@ -230,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
         // save command as result from the activity
         // see https://stackoverflow.com/a/13362722/1320237
         switch(requestCode) {
-            case (ACTIVITY_CREATE_COMMAND) : {
+            case (ACTIVITY_EDIT_COMMAND) : {
                 if (resultCode == Activity.RESULT_OK) {
                     Command command = data.getParcelableExtra(ConfigurationActivity.RESULT_COMMAND);
                     if (command != null) {
