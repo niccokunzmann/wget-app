@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import eu.quelltext.wget.R;
 import eu.quelltext.wget.bin.Executable;
-import eu.quelltext.wget.bin.wget.IWget;
 
 public class NullWget implements IWget {
     @Override

@@ -179,7 +179,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         buttonRun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Command command = saveCommandAndExit();
+                Command command = saveCommand();
                 runCommand(command);
             }
         });
@@ -187,7 +187,8 @@ public class ConfigurationActivity extends AppCompatActivity {
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveCommandAndExit();
+                saveCommand();
+                finish();
             }
         });
         Button buttonCancel = findViewById(R.id.cancel);
@@ -207,7 +208,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         }
     }
 
-    private Command saveCommandAndExit() {
+    private Command saveCommand() {
         Command command = new Command();
         for (Option option: this.command.getOptions()) {
             if (!skipOptionsOnSave.contains(option)) {
@@ -230,7 +231,6 @@ public class ConfigurationActivity extends AppCompatActivity {
         Intent resultIntent = new Intent();
         resultIntent.putExtra(RESULT_COMMAND, command);
         setResult(Activity.RESULT_OK, resultIntent);
-        finish();
         return command;
     }
 
