@@ -149,6 +149,5 @@
     <string name="command_explanation_append_output">Append to logfile. This is the same as log file, only it appends to logfile instead of overwriting the old log file. If logfile does not exist, a new file is created.</string>
     <string name="section_title_logging">Logging and Input File Options</string>
     <string name="activity_title_configuration">Configure Wget</string>
-    <string name="activity_title_configuration">Configure Wget</string>
     <string name="title_activity_main">Wget Commands</string>
 </resources>
