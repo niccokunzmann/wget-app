@@ -35,9 +35,13 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
+                <data android:name="android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:name="android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION" />
                 <data android:mimeType="*/*" />
             </intent-filter>
