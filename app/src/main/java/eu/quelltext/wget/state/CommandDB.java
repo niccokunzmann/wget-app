@@ -84,6 +84,14 @@ public class CommandDB {
         this.observer = observer;
     }
 
+    public List<String> getUrls() {
+        List<String> urls = new ArrayList<>();
+        for (Command command : commands) {
+            urls.addAll(command.getUrls());
+        }
+        return urls;
+    }
+
     // add an observer
     // see https://en.wikipedia.org/wiki/Observer_pattern
     public interface Observer {

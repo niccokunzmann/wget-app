@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -47,6 +49,7 @@ import eu.quelltext.wget.bin.wget.options.Options;
 import eu.quelltext.wget.bin.wget.options.display.File;
 import eu.quelltext.wget.state.CommandDB;
 import eu.quelltext.wget.state.RecyclerObserverAdapter;
+import eu.quelltext.wget.ui.AutoSuggestAdapter;
 
 import static java.nio.file.Files.readAllBytes;
 
@@ -279,6 +282,26 @@ public class ConfigurationActivity extends AppCompatActivity {
         Intent myIntent = new Intent(this, CommandActivity.class);
         myIntent.putExtra(CommandActivity.ARG_COMMAND, command); //Optional parameters
         startActivity(myIntent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUrlsForAutoCompletion();
+    }
+
+    private void setUrlsForAutoCompletion() {
+        CommandDB commands = CommandDB.of(this);
+        commands.load();
+        List<String> possibleUrls = commands.getUrls();
+        possibleUrls.addAll(command.getUrls());
+        // set the autocomplete adapter
+        // see https://developer.android.com/reference/android/widget/AutoCompleteTextView
+        ArrayAdapter<String> urlsAdapter = new AutoSuggestAdapter(this,
+                android.R.layout.simple_dropdown_item_1line, possibleUrls);
+        for (UrlView urlView : urlViews) {
+            urlView.setAutocompletAdapter(urlsAdapter);
+        }
     }
 
     private class Section {
@@ -576,7 +599,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
     private class UrlView {
         private final View root;
-        private final EditText text;
+        private final AutoCompleteTextView text;
 
         private UrlView(String url) {
             // dynamically inflate view
@@ -647,6 +670,10 @@ public class ConfigurationActivity extends AppCompatActivity {
             urlsView.addView(root, index);
             urlViews.add(index,this);
             text.requestFocus();
+        }
+
+        public void setAutocompletAdapter(ArrayAdapter<String> urlsAdapter) {
+            text.setAdapter(urlsAdapter);
         }
     }
 
