@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,24 +14,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.quelltext.wget.R;
 import eu.quelltext.wget.bin.wget.Command;
+import eu.quelltext.wget.state.CommandDB;
+import eu.quelltext.wget.state.RecyclerObserverAdapter;
 
 public class CommandListActivity extends AppCompatActivity {
 
-    private static final String PREFRENCES_COMMANDS = "commands";
     private static final int ACTIVITY_EDIT_COMMAND = 0;
-    static private String PREFERENCES = "preferences";
 
     private RecyclerView recyclerView;
     private CommandsAdapter mAdapter;
-    private List<Command> commands;
+    private CommandDB commands;
     private SharedPreferences mPrefs;
     private FloatingActionButton fab;
 
@@ -56,8 +49,9 @@ public class CommandListActivity extends AppCompatActivity {
         mAdapter = new CommandsAdapter();
         recyclerView.setAdapter(mAdapter);
 
-        mPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE);
-        loadCommands();
+        commands = CommandDB.of(this);
+        commands.register(new RecyclerObserverAdapter(mAdapter));
+        commands.load();
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,47 +66,16 @@ public class CommandListActivity extends AppCompatActivity {
         editCommand(Command.createDefaultCommand());
     }
 
-    private void loadCommands() {
-        String commandsString = mPrefs.getString(PREFRENCES_COMMANDS, null);
-        if (commandsString == null) {
-            commands = defaultCommands();
-        } else {
-            commands = Command.listFromString(commandsString);
-        }
-        if (commands.size() == 0) {
-            commands = defaultCommands();
-        }
-        mAdapter.notifyDataSetChanged();
-    }
-
-    private List<Command> defaultCommands() {
-        List<Command> commands = new ArrayList<>();
-        commands.add(Command.VERSION);
-        commands.add(Command.GET_IMAGE);
-        commands.add(Command.PORTAL_TO_STDOUT);
-        commands.add(Command.LOCALHOST_TO_STDOUT);
-        return commands;
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        loadCommands();
+        commands.load();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        storeCommands();
-    }
-
-    private void storeCommands() {
-        // see https://developer.android.com/reference/android/app/Activity.html#SavingPersistentState
-        // for persistent state
-        SharedPreferences.Editor ed = mPrefs.edit();
-        String commandString = Command.listToString(commands);
-        ed.putString(PREFRENCES_COMMANDS, commandString);
-        ed.apply();
+        commands.save();
     }
 
     class CommandsAdapter extends RecyclerView.Adapter {
@@ -161,7 +124,7 @@ public class CommandListActivity extends AppCompatActivity {
                 root.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        removeCommand(command);
+                        commands.remove(command);
                         return true;
                     }
                 });
@@ -218,38 +181,6 @@ public class CommandListActivity extends AppCompatActivity {
         startActivityForResult(myIntent, ACTIVITY_EDIT_COMMAND);
     }
 
-    private void removeCommand(Command command) {
-        int index = commands.indexOf(command);
-        commands.remove(index);
-        // notify about removal https://stackoverflow.com/a/26645164/1320237
-        mAdapter.notifyItemRemoved(index);
-        storeCommands();
-    }
-
-    private void addCommand(Command command) {
-        commands.add(0, command);
-        mAdapter.notifyItemInserted(0);
-        storeCommands();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // save command as result from the activity
-        // see https://stackoverflow.com/a/13362722/1320237
-        switch(requestCode) {
-            case (ACTIVITY_EDIT_COMMAND) : {
-                if (resultCode == Activity.RESULT_OK) {
-                    Command command = data.getParcelableExtra(ConfigurationActivity.RESULT_COMMAND);
-                    if (command != null) {
-                        addCommand(command);
-                    }
-                }
-                break;
-            }
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -266,7 +197,7 @@ public class CommandListActivity extends AppCompatActivity {
                 editNewCommand();
                 return true;
             case R.id.menu_delete_all_commands:
-                deleteAllCommands();
+                commands.reset();
                 return true;
             case R.id.menu_about:
                 openAboutActivity();
@@ -274,12 +205,6 @@ public class CommandListActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void deleteAllCommands() {
-        commands = new ArrayList<>();
-        storeCommands();
-        loadCommands();
     }
 
     private void openAboutActivity() {

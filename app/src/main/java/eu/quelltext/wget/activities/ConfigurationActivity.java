@@ -39,6 +39,8 @@ import eu.quelltext.wget.bin.wget.options.display.Display;
 import eu.quelltext.wget.bin.wget.options.display.DisplayableOption;
 import eu.quelltext.wget.bin.wget.options.Option;
 import eu.quelltext.wget.bin.wget.options.Options;
+import eu.quelltext.wget.state.CommandDB;
+import eu.quelltext.wget.state.RecyclerObserverAdapter;
 
 public class ConfigurationActivity extends AppCompatActivity {
 
@@ -238,6 +240,11 @@ public class ConfigurationActivity extends AppCompatActivity {
                 command.addUrl(urlView.getUrl());
             }
         }
+        // save the command for other views
+        CommandDB commands = CommandDB.of(this);
+        commands.load();
+        commands.add(command);
+        commands.save();
         // return command to calling activity
         // see https://stackoverflow.com/a/947560/1320237
         Intent resultIntent = new Intent();
