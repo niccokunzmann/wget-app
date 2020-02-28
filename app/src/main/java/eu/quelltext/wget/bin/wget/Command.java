@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -271,5 +273,24 @@ public class Command implements Parcelable {
             }
         }
         return permissions;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object other) {
+        if (Command.class.isInstance(other)) {
+            return ((Command)other).equalsCommand(this);
+        }
+        return super.equals(other);
+    }
+
+    public boolean equalsCommand(Command other) {
+        // check for equality, see https://stackoverflow.com/a/13501662/1320237
+        return getUrls().containsAll(other.getUrls()) && other.getUrls().containsAll(getUrls()) &&
+                getOptions().containsAll(other.getOptions()) && other.getOptions().containsAll(getOptions());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

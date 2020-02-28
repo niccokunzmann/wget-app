@@ -4,9 +4,13 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import eu.quelltext.wget.bin.wget.Command;
 import eu.quelltext.wget.bin.wget.options.display.Display;
 import eu.quelltext.wget.bin.wget.options.display.DisplayableOption;
 
@@ -56,6 +60,7 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
     }
 
     @Override
+    @NonNull
     public String manualId() {
         return "";
     }
@@ -107,8 +112,9 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
     }
 
     /* return the argument if the option has one */
+    @NonNull
     public String getArgument() {
-        return null;
+        return "";
     }
 
     public boolean readsExternalStorage() {
@@ -117,6 +123,23 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
 
     public boolean revokesWritingToExternalStorage() {
         return (manualId().equals("-O") || manualId().equals("--output-document")) && getArgument().equals("-");
+    }
+
+    @Override
+    public boolean equals(@Nullable Object other) {
+        if (Option.class.isInstance(other)) {
+            return ((Option)other).equalsOption(this);
+        }
+        return super.equals(other);
+    }
+
+    private boolean equalsOption(Option option) {
+        return manualId().equals(option.manualId()) && getArgument().equals(option.getArgument());
+    }
+
+    @Override
+    public int hashCode() {
+        return manualId().hashCode() ^ getArgument().hashCode();
     }
 
     static class Unknown extends Option {

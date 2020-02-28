@@ -65,19 +65,25 @@ public class CommandDB {
         return commands.get(position);
     }
 
-    public void remove(Command command) {
+    public void removeWithoutSaving(Command command) {
         int index = commands.indexOf(command);
         commands.remove(index);
         // notify about removal https://stackoverflow.com/a/26645164/1320237
         observer.notifyItemRemoved(index);
+    }
+
+    public void remove(Command command) {
+        removeWithoutSaving(command);
         save();
     }
 
     public void add(Command command) {
+        while (commands.contains(command)) {
+            removeWithoutSaving(command);
+        }
         commands.add(0, command);
         observer.notifyItemInserted(0);
         save();
-
     }
 
     public void register(Observer observer) {
