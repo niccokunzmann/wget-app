@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,10 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -255,6 +258,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         private final View root;
         private final LinearLayout optionsView;
         private List<DisplayableOption> options = new ArrayList<>();
+        private int optionsActivated = 0;
 
         public Section(int title) {
             // dynamically inflate view
@@ -300,19 +304,26 @@ public class ConfigurationActivity extends AppCompatActivity {
                             android.R.drawable.ic_menu_close_clear_cancel);
             ImageView editImage = root.findViewById(R.id.edit_image);
             editImage.setImageDrawable(d);
+            editImage.setBackgroundColor(optionsActivated > 0 ?
+                    getResources().getColor(R.color.colorPrimary) : Color.TRANSPARENT);
         }
 
         public void add(DisplayableOption option) {
             options.add(option);
+            Option optionFromCommand = getOptionFromCommand(option);
+            if (optionFromCommand != null) {
+                notifyOptionWasActivated();
+            }
         }
 
         private void display(final DisplayableOption option) {
             final OptionBuilder builder = new OptionBuilder();
             option.displayIn(builder);
-            Option prefilledOption = command.getOptionWithId(option.manualId());
-            if (prefilledOption != null) {
-                option.fillWith(builder, prefilledOption);
-                skipOptionsOnSave.add(prefilledOption);
+            Option optionFromCommand = getOptionFromCommand(option);
+            if (optionFromCommand != null) {
+                notifyOptionWasDeactivated();
+                option.fillWith(builder, optionFromCommand);
+                skipOptionsOnSave.add(optionFromCommand);
             }
             builder.done();
             optionValues.add(new OptionValue(){
@@ -324,6 +335,20 @@ public class ConfigurationActivity extends AppCompatActivity {
                     }
                 }
             });
+        }
+
+        private Option getOptionFromCommand(DisplayableOption option) {
+            return command.getOptionWithId(option.manualId());
+        }
+
+        private void notifyOptionWasActivated() {
+            optionsActivated++;
+            updateEditImage();
+        }
+
+        private void notifyOptionWasDeactivated() {
+            optionsActivated--;
+            updateEditImage();
         }
 
         public void odd() {
@@ -340,7 +365,6 @@ public class ConfigurationActivity extends AppCompatActivity {
             private Set<Integer> hideViewsWithIds = new HashSet<>();
             private EditText numberView;
             private EditText fileView;
-            private boolean fileDialog = true;
 
             private OptionBuilder() {
                 // dynamically inflate view
@@ -389,6 +413,19 @@ public class ConfigurationActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         toggle.toggle();
+
+                    }
+                });
+                // set change listener to update section
+                // see https://stackoverflow.com/a/11278528/1320237
+                toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                        if (checked) {
+                            notifyOptionWasActivated();
+                        } else {
+                            notifyOptionWasDeactivated();
+                        }
                     }
                 });
             }
