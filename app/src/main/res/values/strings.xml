@@ -94,7 +94,7 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="action_settings">Settings</string>
+    <string name="menu_create_new_command">new command</string>
     <string name="title_activity_configuration">Configuration</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
@@ -136,8 +136,9 @@
     <string name="choose_a_file">Choose a File</string>
     <string name="option_output">app</string>
     <string name="command_name_directory_prefix">directory prefix</string>
-    <string name="command_explanation_directory_prefix">Set directory prefix to prefix. The directory prefix is the directory where all other files and subdirectories will be saved to, i.e. the top of the retrieval tree. The default is . (the current directory).</string>
+    <string name="command_explanation_directory_prefix">Set directory prefix to prefix. The directory prefix is the directory where all other files and subdirectories will be saved to, i.e. the top of the retrieval tree. The default is . (the Downloads directory).</string>
     <string name="section_title_directory">Directory Options</string>
+    <string name="section_title_favorite">Popular Options</string>
     <string name="choose_a_directory">Choose a Directory</string>
     <string name="directory_downloads">Downloads</string>
     <string name="invite_to_install_io_file_manager">You can choose directories using the IO Filemanager. Please download and install it to use this functionality.</string>
@@ -150,4 +151,6 @@
     <string name="section_title_logging">Logging and Input File Options</string>
     <string name="activity_title_configuration">Configure Wget</string>
     <string name="title_activity_main">Wget Commands</string>
+    <string name="menu_create_delete_all_commands">delete all</string>
+    <string name="menu_about">about</string>
 </resources>

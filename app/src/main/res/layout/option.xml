@@ -18,21 +18,10 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
             android:text="@string/command_name_debug"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <ImageButton
-            android:id="@+id/openFile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            app:srcCompat="@android:drawable/ic_menu_save" />
-
-        <ImageButton
-            android:id="@+id/default_path"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_revert" />
 
         <EditText
             android:id="@+id/number"
@@ -45,19 +34,49 @@
 
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/file"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="-"
-        android:singleLine="true" />
+        android:layout_marginLeft="@dimen/option_margin"
+        android:layout_marginRight="@dimen/option_margin"
+        android:layout_marginBottom="@dimen/option_margin"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/explanation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/command_explanation_debug"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="-" />
+
+            <ImageButton
+                android:id="@+id/default_path"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_revert" />
+
+            <ImageButton
+                android:id="@+id/openFile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                app:srcCompat="@android:drawable/ic_menu_save" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/explanation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/command_explanation_debug"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+    </LinearLayout>
 
 </LinearLayout>

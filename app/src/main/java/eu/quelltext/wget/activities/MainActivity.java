@@ -2,17 +2,16 @@ package eu.quelltext.wget.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -64,9 +63,13 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editCommand(Command.newDefault());
+                editNewCommand();
             }
         });
+    }
+
+    private void editNewCommand() {
+        editCommand(Command.createDefaultCommand());
     }
 
     private void loadCommands() {
@@ -245,5 +248,41 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        // see https://www.javatpoint.com/android-option-menu-example
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.menu_new_command:
+                editNewCommand();
+                return true;
+            case R.id.menu_delete_all_commands:
+                deleteAllCommands();
+                return true;
+            case R.id.menu_about:
+                openAboutActivity();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void deleteAllCommands() {
+        commands = new ArrayList<>();
+        storeCommands();
+        loadCommands();
+    }
+
+    private void openAboutActivity() {
+
     }
 }

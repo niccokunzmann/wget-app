@@ -1,4 +1,4 @@
-package eu.quelltext.wget.bin.wget;
+package eu.quelltext.wget.bin.wget.options;
 
 import android.content.Context;
 import android.os.Parcel;
@@ -6,6 +6,9 @@ import android.os.Parcelable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import eu.quelltext.wget.bin.wget.options.display.Display;
+import eu.quelltext.wget.bin.wget.options.display.DisplayableOption;
 
 /*
   Base class for different options.
@@ -118,7 +121,7 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
         }
     }
 
-    static class Unrecorded extends Option {
+    public static class Unrecorded extends Option {
         private final String id;
 
         public Unrecorded(Parcel in) {

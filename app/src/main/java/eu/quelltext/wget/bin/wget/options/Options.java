@@ -1,4 +1,4 @@
-package eu.quelltext.wget.bin.wget;
+package eu.quelltext.wget.bin.wget.options;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -6,6 +6,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import eu.quelltext.wget.R;
+import eu.quelltext.wget.bin.wget.options.display.Directory;
+import eu.quelltext.wget.bin.wget.options.display.File;
+import eu.quelltext.wget.bin.wget.options.display.Integer;
+import eu.quelltext.wget.bin.wget.options.display.Strategy;
 
 public class Options {
 
@@ -24,21 +28,21 @@ public class Options {
     public static final ArgumentOptionBuilder OUTPUT_FILE = addFileArgument("--output-file", R.string.command_name_output_file, R.string.command_explanation_output_file, "/proc/self/fd/1");
     public static final ArgumentOptionBuilder APPEND_OUTPUT = addFileArgument("--append-output", R.string.command_name_append_output, R.string.command_explanation_append_output, "/proc/self/fd/1");
     public static final ArgumentOptionBuilder DIRECTORY_PREFIX = addDirectoryArgument("--directory-prefix", R.string.command_name_directory_prefix, R.string.command_explanation_directory_prefix);
-    public static final ArgumentOptionBuilder TRIES = addIntArgument("--tries", R.string.command_name_tries, R.string.command_explanation_tries);
-    public static final ArgumentOptionBuilder DEPTH = addIntArgument("-l", R.string.command_name_depth, R.string.command_explanation_depth);
+    public static final ArgumentOptionBuilder TRIES = addIntArgument("--tries", R.string.command_name_tries, R.string.command_explanation_tries, 20);
+    public static final ArgumentOptionBuilder DEPTH = addIntArgument("-l", R.string.command_name_depth, R.string.command_explanation_depth, 5);
 
-    private static ArgumentOptionBuilder addIntArgument(String id, int name, int text) {
-        return addArgument(id, name, text, ArgumentOptionBuilder.INTEGER);
+    private static ArgumentOptionBuilder addIntArgument(String id, int name, int text, int defaultValue) {
+        return addArgument(id, name, text, new Integer(defaultValue));
     }
     private static ArgumentOptionBuilder addFileArgument(String id, int name, int text, String file) {
-        return addArgument(id, name, text, ArgumentOptionBuilder.FILE(file));
+        return addArgument(id, name, text, new File(file));
     }
 
     private static ArgumentOptionBuilder addDirectoryArgument(String id, int name, int text) {
-        return addArgument(id, name, text, ArgumentOptionBuilder.DIRECTORY);
+        return addArgument(id, name, text, new Directory());
     }
 
-    private static ArgumentOptionBuilder addArgument(String id, int name, int text, ArgumentOptionBuilder.DisplayStrategy displayStrategy) {
+    private static ArgumentOptionBuilder addArgument(String id, int name, int text, Strategy displayStrategy) {
         ArgumentOptionBuilder result = new ArgumentOptionBuilder(id, name, text, displayStrategy);
         MANUAL.store(result);
         return result;

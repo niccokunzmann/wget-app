@@ -16,6 +16,8 @@ import java.util.List;
 
 import eu.quelltext.wget.bin.BinaryAccess;
 import eu.quelltext.wget.bin.Executable;
+import eu.quelltext.wget.bin.wget.options.Option;
+import eu.quelltext.wget.bin.wget.options.Options;
 
 
 public class Command implements Parcelable {
@@ -32,8 +34,14 @@ public class Command implements Parcelable {
     public static final Command PORTAL_TO_STDOUT = new Command().addOption(Options.OUTPUT_DOCUMENT.to("-")).addUrl(EXAMPLE_PORTAL_URL);
     public static final Command LOCALHOST_TO_STDOUT = new Command().addOption(Options.OUTPUT_DOCUMENT.to("-")).addUrl(EXAMPLE_LOCALHOST_URL);
 
-    public static Command newDefault() {
-        return new Command();
+    public static Command createDefaultCommand() {
+        Command command = new Command();
+        // see the issue to create a user friendly default command
+        // https://stackoverflow.com/a/57116787/1320237
+        command.addOption(Options.OUTPUT_FILE.defaultOption());
+        command.addOption(Options.DIRECTORY_PREFIX.defaultOption());
+        command.addOption(Options.CONTINUE);
+        return command;
     }
 
     public Command addUrl(String url) {

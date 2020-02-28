@@ -1,4 +1,4 @@
-package eu.quelltext.wget.bin.wget;
+package eu.quelltext.wget.bin.wget.options;
 
 import android.content.Context;
 import android.os.Parcel;

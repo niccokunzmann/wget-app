@@ -24,6 +24,8 @@ public class Executable {
     public Result run(String[] parameters) throws IOException {
         // concatenate two arrays, see https://stackoverflow.com/a/80559/1320237
         String[] command = ArrayUtils.addAll(new String[]{this.path}, parameters);
+        // should be removed in the future
+        // see https://stackoverflow.com/a/57116787/1320237
         File cwd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         Process process = Runtime.getRuntime().exec(command, null, cwd);
         DataOutputStream os = new DataOutputStream(process.getOutputStream());
@@ -118,7 +120,7 @@ public class Executable {
             try {
                 // should raise, see https://www.baeldung.com/java-process-api#exitvalue-method
                 process.exitValue();
-            } catch (IllegalStateException e) {
+            } catch (Exception e) {
                 return true;
             }
             return false;

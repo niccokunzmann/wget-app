@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +32,10 @@ import java.util.regex.Pattern;
 
 import eu.quelltext.wget.R;
 import eu.quelltext.wget.bin.wget.Command;
-import eu.quelltext.wget.bin.wget.DisplayableOption;
-import eu.quelltext.wget.bin.wget.Option;
-import eu.quelltext.wget.bin.wget.Options;
+import eu.quelltext.wget.bin.wget.options.display.Display;
+import eu.quelltext.wget.bin.wget.options.display.DisplayableOption;
+import eu.quelltext.wget.bin.wget.options.Option;
+import eu.quelltext.wget.bin.wget.options.Options;
 
 public class ConfigurationActivity extends AppCompatActivity {
 
@@ -103,7 +103,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         if (command == null) {
             // activity is opened by an intent
             // see https://stackoverflow.com/a/9637366/1320237
-            command = new Command();
+            command = Command.createDefaultCommand();
         }
 
         // add urls to command
@@ -149,6 +149,13 @@ public class ConfigurationActivity extends AppCompatActivity {
         sectionsView = findViewById(R.id.sections);
 
         optionValues = new ArrayList<>();
+
+        Section easy = new Section(R.string.section_title_favorite);
+        easy.even();
+        easy.add(Options.DIRECTORY_PREFIX);
+        easy.add(Options.CONTINUE);
+        easy.add(Options.MIRROR);
+
         Section startup = new Section(R.string.section_title_startup);
         startup.odd();
         startup.add(Options.VERSION);
@@ -163,17 +170,17 @@ public class ConfigurationActivity extends AppCompatActivity {
         download.odd();
         download.add(Options.TRIES);
         download.add(Options.OUTPUT_DOCUMENT);
-        download.add(Options.CONTINUE);
+        //download.add(Options.CONTINUE); // in favorites
 
         Section recursive = new Section(R.string.section_title_recursive);
         recursive.even();
         recursive.add(Options.RECURSIVE);
         recursive.add(Options.DEPTH);
-        recursive.add(Options.MIRROR);
+        //recursive.add(Options.MIRROR); // in favorites
 
-        Section directory = new Section(R.string.section_title_directory);
-        directory.odd();
-        directory.add(Options.DIRECTORY_PREFIX);
+        //Section directory = new Section(R.string.section_title_directory);
+        //directory.odd();
+        //directory.add(Options.DIRECTORY_PREFIX); // in favorites
 
         Button buttonRun = findViewById(R.id.run);
         buttonRun.setOnClickListener(new View.OnClickListener() {
@@ -324,7 +331,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             root.setBackgroundColor(getResources().getColor(R.color.background_even));
         }
 
-        class OptionBuilder implements DisplayableOption.Display {
+        class OptionBuilder implements Display {
 
             private final View optionView;
             private Switch toggle;
@@ -417,7 +424,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void addDirectoryDialog() {
+            public void addDirectoryDialog(final String directory) {
                 fileView = showView(R.id.file);
                 ImageButton openFile = showView(R.id.openFile);
                 View.OnClickListener click = new View.OnClickListener() {
@@ -443,15 +450,14 @@ public class ConfigurationActivity extends AppCompatActivity {
                 };
                 openFile.setOnClickListener(click);
                 ImageButton defaultPath = showView(R.id.default_path);
-                final String downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
                 defaultPath.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         // from https://stackoverflow.com/a/7908446/1320237
-                        setPath(downloadDirectory);
+                        setPath(directory);
                     }
                 });
-                fileView.setText(downloadDirectory);
+                fileView.setText(directory);
             }
 
             @Override

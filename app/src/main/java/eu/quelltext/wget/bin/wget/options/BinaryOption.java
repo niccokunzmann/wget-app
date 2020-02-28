@@ -1,11 +1,13 @@
-package eu.quelltext.wget.bin.wget;
+package eu.quelltext.wget.bin.wget.options;
 
 import android.content.Context;
 import android.os.Parcel;
 
 import org.json.JSONObject;
 
-class BinaryOption extends Option {
+import eu.quelltext.wget.bin.wget.options.display.Display;
+
+public class BinaryOption extends Option {
     private final String cmd;
     private final int nameId;
     private final int explanationId;
