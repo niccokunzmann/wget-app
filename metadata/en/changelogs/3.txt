@@ -1,3 +1,4 @@
 - fix build error with duplicated description
 - add popular options tab
 - make logging to stdout a default
+- add about activity
