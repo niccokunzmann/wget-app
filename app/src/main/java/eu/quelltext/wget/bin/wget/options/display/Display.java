@@ -6,7 +6,7 @@ public interface Display {
     void addTitle(int nameId);
     void addExplanation(int explanationId);
     void addSwitch();
-    void addNumber();
+    void addNumberField(String defaultNumber);
     void addFileDialog(String file);
     void switchOn();
     void setNumber(String argument);
@@ -14,4 +14,10 @@ public interface Display {
     String getNumber();
     String getPath();
     void addDirectoryDialog(String directory);
+    String getUrl();
+    void setUrl(String url);
+    void addUrlField(String defaultUrl);
+    void addTextField(String defaultText);
+    void setText(String text);
+    String getText();
 }

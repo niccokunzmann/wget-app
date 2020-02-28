@@ -10,8 +10,10 @@ import org.json.JSONObject;
 import eu.quelltext.wget.bin.wget.options.display.Display;
 import eu.quelltext.wget.bin.wget.options.display.DisplayableOption;
 
-/*
-  Base class for different options.
+/* Base class for different options.
+ *
+ * If you create a new subclass, make sure you add serialization to this.Creator and
+ *
  */
 public class Option implements Parcelable, Options.Manual.ManualEntry, DisplayableOption {
 
@@ -33,6 +35,8 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
                 return new ArgumentOption(in);
             } if (name.equals(Unrecorded.class.getName())){
                 return new Unrecorded(in);
+            } if (name.equals(EnvironmentOption.class.getName())){
+                return new EnvironmentOption(in);
             }
             return new Unknown();
         }
@@ -76,6 +80,12 @@ public class Option implements Parcelable, Options.Manual.ManualEntry, Displayab
 
     public String[] asArguments() {
         return new String[0];
+    }
+
+    // return null or an env string used for a process "FOO=false"
+    // see https://stackoverflow.com/a/8607281/1320237
+    public String asEnvironmentVariable() {
+        return null;
     }
 
     public String toShortText(Context context) {

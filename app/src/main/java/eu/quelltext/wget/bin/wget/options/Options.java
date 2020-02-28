@@ -10,6 +10,8 @@ import eu.quelltext.wget.bin.wget.options.display.Directory;
 import eu.quelltext.wget.bin.wget.options.display.File;
 import eu.quelltext.wget.bin.wget.options.display.Integer;
 import eu.quelltext.wget.bin.wget.options.display.Strategy;
+import eu.quelltext.wget.bin.wget.options.display.Text;
+import eu.quelltext.wget.bin.wget.options.display.Url;
 
 public class Options {
 
@@ -31,9 +33,26 @@ public class Options {
     public static final ArgumentOptionBuilder TRIES = addIntArgument("--tries", R.string.command_name_tries, R.string.command_explanation_tries, 20);
     public static final ArgumentOptionBuilder DEPTH = addIntArgument("-l", R.string.command_name_depth, R.string.command_explanation_depth, 5);
 
+    public static final ArgumentOptionBuilder HTTP_PROXY = addEnvUrlArgument("http_proxy", R.string.command_name_http_proxy, R.string.command_explanation_http_proxy, "http://localhost:8118");
+    public static final ArgumentOptionBuilder HTTPS_PROXY = addEnvUrlArgument("https_proxy", R.string.command_name_http_proxy, R.string.command_explanation_http_proxy, "http://localhost:8118");
+    public static final ArgumentOptionBuilder FTP_PROXY = addEnvUrlArgument("ftp_proxy", R.string.command_name_ftp_proxy, R.string.command_explanation_ftp_proxy, "");
+    public static final ArgumentOptionBuilder NO_PROXY = addEnvArgument("no_proxy", R.string.command_name_no_proxy, R.string.command_explanation_no_proxy, new Text("localhost,127.0.0.1"));
+
+
+    private static ArgumentOptionBuilder addEnvUrlArgument(String id, int name, int text, String defaultValue) {
+        return addEnvArgument(id, name, text, new Url(defaultValue));
+    }
+
+    private static ArgumentOptionBuilder addEnvArgument(String id, int name, int text, Strategy displayStrategy) {
+        ArgumentOptionBuilder result = new EnvironmentOptionBuilder(id, name, text, displayStrategy);
+        MANUAL.store(result);
+        return result;
+    }
+
     private static ArgumentOptionBuilder addIntArgument(String id, int name, int text, int defaultValue) {
         return addArgument(id, name, text, new Integer(defaultValue));
     }
+
     private static ArgumentOptionBuilder addFileArgument(String id, int name, int text, String file) {
         return addArgument(id, name, text, new File(file));
     }

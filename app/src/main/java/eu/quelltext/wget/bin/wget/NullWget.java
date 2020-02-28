@@ -20,7 +20,7 @@ public class NullWget implements IWget {
     }
 
     @Override
-    public Executable.Result run(String[] command) {
+    public Executable.Result run(String[] command, String[] envList) {
         return new NullResult();
     }
 

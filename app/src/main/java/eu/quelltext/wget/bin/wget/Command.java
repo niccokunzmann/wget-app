@@ -104,11 +104,12 @@ public class Command implements Parcelable {
 
     public Executable.Result run(Context context) throws IOException {
         IWget wget = new BinaryAccess(context).wget();
-        String[] commandList = getCommandList();
-        return wget.run(commandList);
+        String[] arguments = getArgumentsList();
+        String[] envList = getEnvironmentList();
+        return wget.run(arguments, envList);
     }
 
-    private String[] getCommandList() {
+    public String[] getArgumentsList() {
         List<String> command = new ArrayList<>();
         for (Option option: options) {
             for (String argument : option.asArguments()) {
@@ -118,11 +119,17 @@ public class Command implements Parcelable {
         for (String url: urls) {
             command.add(url);
         }
-        String[] commandList = new String[command.size()];
-        for (int i = 0; i < command.size(); i++) {
-            commandList[i] = command.get(i);
+        return command.toArray(new String[]{});
+    }
+    public String[] getEnvironmentList() {
+        List<String> envList = new ArrayList<>();
+        for (Option option: options) {
+            String environmentVariable = option.asEnvironmentVariable();
+            if (environmentVariable != null) {
+                envList.add(environmentVariable);
+            }
         }
-        return commandList;
+        return envList.toArray(new String[]{});
     }
 
     public List<String> getUrls() {
@@ -160,9 +167,14 @@ public class Command implements Parcelable {
 
     public String asCommandLineText() {
         String cmd = BASE_COMMAND;
-        String[] commands = getCommandList();
-        for (String item: commands) {
+        String[] arguments = getArgumentsList();
+        for (String item: arguments) {
             cmd += " " + StringEscapeUtils.escapeXSI(item);
+        }
+        String[] env = getEnvironmentList();
+        for (String item: env) {
+            int equalSignIndex = item.indexOf("=") + 1;
+            cmd = item.substring(0, equalSignIndex) + StringEscapeUtils.escapeXSI(item.substring(equalSignIndex)) + " " + cmd;
         }
         return cmd;
     }

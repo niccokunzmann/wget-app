@@ -24,13 +24,19 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <EditText
-            android:id="@+id/number"
+            android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:inputType="number"
             android:singleLine="true" />
+
+        <ImageButton
+            android:id="@+id/default_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_revert" />
 
     </LinearLayout>
 

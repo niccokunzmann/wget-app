@@ -28,16 +28,28 @@ public class ArgumentOptionBuilder implements Options.Manual.ManualEntry, Displa
         return new ArgumentOption(this.cmd, this.nameId, this.explanationId, argument);
     }
 
-    @Override
-    public Option fromManualJSON(JSONObject json) throws JSONException {
-        String argument = json.getString(JSON_ARGUMENT);
-        Option option = new ArgumentOption(cmd, nameId, explanationId, argument);
-        return option;
+    public int getNameId() {
+        return nameId;
+    }
+
+    public int getExplanationId() {
+        return explanationId;
+    }
+
+    public Strategy getDisplayStrategy() {
+        return displayStrategy;
     }
 
     @Override
     public String manualId() {
         return cmd;
+    }
+
+    @Override
+    public Option fromManualJSON(JSONObject json) throws JSONException {
+        String argument = json.getString(JSON_ARGUMENT);
+        Option option = to(argument);
+        return option;
     }
 
     @Override
@@ -55,12 +67,12 @@ public class ArgumentOptionBuilder implements Options.Manual.ManualEntry, Displa
     @Override
     public void displayIn(Display section) {
         section.addSwitch();
-        section.addTitle(this.nameId);
-        section.addExplanation(this.explanationId);
+        section.addTitle(getNameId());
+        section.addExplanation(getExplanationId());
         displayStrategy.displayIn(section);
     }
 
     public Option defaultOption() {
-        return to(displayStrategy.getDefaultArgument());
+        return to(getDisplayStrategy().getDefaultArgument());
     }
 }

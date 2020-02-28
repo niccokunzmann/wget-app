@@ -12,5 +12,5 @@ public interface IWget {
 
     boolean isValid();
 
-    Executable.Result run(String[] command) throws IOException;
+    Executable.Result run(String[] command, String[] envList) throws IOException;
 }

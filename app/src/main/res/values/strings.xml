@@ -175,4 +175,11 @@
         along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
     </string>
     <string name="activity_send_name_configuration">Download with Wget</string>
+    <string name="command_name_http_proxy">HTTP proxy</string>
+    <string name="command_explanation_http_proxy">If set, the http_proxy and https_proxy variables should contain the URLs of the proxies for HTTP and HTTPS connections respectively.</string>
+    <string name="command_name_ftp_proxy">FTP proxy</string>
+    <string name="command_explanation_ftp_proxy">This variable should contain the URL of the proxy for FTP connections. It is quite common that http_proxy and ftp_proxy are set to the same URL.</string>
+    <string name="command_name_no_proxy">no proxy domains</string>
+    <string name="command_explanation_no_proxy">This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is .mit.edu, proxy will not be used to retrieve documents from MIT.</string>
+    <string name="section_title_proxy">Proxy Settings</string>
 </resources>

@@ -1,6 +1,7 @@
 package eu.quelltext.wget.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,12 +47,8 @@ import eu.quelltext.wget.bin.wget.options.display.Display;
 import eu.quelltext.wget.bin.wget.options.display.DisplayableOption;
 import eu.quelltext.wget.bin.wget.options.Option;
 import eu.quelltext.wget.bin.wget.options.Options;
-import eu.quelltext.wget.bin.wget.options.display.File;
 import eu.quelltext.wget.state.CommandDB;
-import eu.quelltext.wget.state.RecyclerObserverAdapter;
 import eu.quelltext.wget.ui.AutoSuggestAdapter;
-
-import static java.nio.file.Files.readAllBytes;
 
 public class ConfigurationActivity extends AppCompatActivity {
 
@@ -212,6 +209,14 @@ public class ConfigurationActivity extends AppCompatActivity {
         //Section directory = new Section(R.string.section_title_directory);
         //directory.odd();
         //directory.add(Options.DIRECTORY_PREFIX); // in favorites
+
+        Section proxy = new Section(R.string.section_title_proxy);
+        proxy.odd();
+        proxy.add(Options.HTTP_PROXY);
+        proxy.add(Options.HTTPS_PROXY);
+        proxy.add(Options.FTP_PROXY);
+        proxy.add(Options.NO_PROXY);
+
 
         Button buttonRun = findViewById(R.id.run);
         buttonRun.setOnClickListener(new View.OnClickListener() {
@@ -414,8 +419,8 @@ public class ConfigurationActivity extends AppCompatActivity {
             private final View optionView;
             private Switch toggle;
             private Set<Integer> hideViewsWithIds = new HashSet<>();
-            private EditText numberView;
-            private EditText fileView;
+            private EditText textInput;
+            private EditText fileInput;
 
             private OptionBuilder() {
                 // dynamically inflate view
@@ -425,11 +430,13 @@ public class ConfigurationActivity extends AppCompatActivity {
 
                 hideViewsWithIds.add(R.id.title);
                 hideViewsWithIds.add(R.id.toggle);
-                hideViewsWithIds.add(R.id.number);
+                hideViewsWithIds.add(R.id.text);
                 hideViewsWithIds.add(R.id.file);
                 hideViewsWithIds.add(R.id.openFile);
                 hideViewsWithIds.add(R.id.default_path);
                 hideViewsWithIds.add(R.id.explanation);
+                hideViewsWithIds.add(R.id.default_text);
+
             }
 
             public <T extends View> T showView(int id) {
@@ -482,13 +489,28 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void addNumber() {
-                numberView = showView(R.id.number);
+            public void addNumberField(String defaultNumber) {
+                showTextInputWithType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL, defaultNumber);
+            }
+
+            private void showTextInputWithType(int inputType, final String defaultText) {
+                textInput = showView(R.id.text);
+                // set number type
+                // see https://stackoverflow.com/a/21603219/1320237
+                textInput.setInputType(inputType);
+                AppCompatImageButton backToDefaultButton = showView(R.id.default_text);
+                backToDefaultButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textInput.setText(defaultText);
+                    }
+                });
+                textInput.setText(defaultText);
             }
 
             @Override
             public void addFileDialog(final String path) {
-                fileView = showView(R.id.file);
+                fileInput = showView(R.id.file);
                 ImageButton openFile = showView(R.id.openFile);
                 View.OnClickListener click = new View.OnClickListener() {
                     @Override
@@ -515,7 +537,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
             @Override
             public void addDirectoryDialog(final String directory) {
-                fileView = showView(R.id.file);
+                fileInput = showView(R.id.file);
                 ImageButton openFile = showView(R.id.openFile);
                 View.OnClickListener click = new View.OnClickListener() {
                     @Override
@@ -547,7 +569,39 @@ public class ConfigurationActivity extends AppCompatActivity {
                         setPath(directory);
                     }
                 });
-                fileView.setText(directory);
+                fileInput.setText(directory);
+            }
+
+            @Override
+            public String getUrl() {
+                return getText();
+            }
+
+            @Override
+            public void setUrl(String url) {
+                setText(url);
+            }
+
+            @Override
+            public void addUrlField(String defaultUrl) {
+                // https://developer.android.com/reference/android/text/InputType.html#TYPE_TEXT_VARIATION_URI
+                showTextInputWithType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI, defaultUrl);
+            }
+
+            @Override
+            public void addTextField(String defaultText) {
+                // https://developer.android.com/reference/android/text/InputType.html#TYPE_CLASS_TEXT
+                showTextInputWithType(InputType.TYPE_CLASS_TEXT, defaultText);
+            }
+
+            @Override
+            public void setText(String text) {
+                textInput.setText(text);
+            }
+
+            @Override
+            public String getText() {
+                return textInput.getText().toString();
             }
 
             @Override
@@ -557,22 +611,22 @@ public class ConfigurationActivity extends AppCompatActivity {
 
             @Override
             public void setNumber(String argument) {
-                numberView.setText(argument);
+                setText(argument);
             }
 
             @Override
             public void setPath(String argument) {
-                fileView.setText(argument);
+                fileInput.setText(argument);
             }
 
             @Override
             public String getNumber() {
-                return numberView.getText().toString();
+                return getText();
             }
 
             @Override
             public String getPath() {
-                return fileView.getText().toString();
+                return fileInput.getText().toString();
             }
 
             public void done() {

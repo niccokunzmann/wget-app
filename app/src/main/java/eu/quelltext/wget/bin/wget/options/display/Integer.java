@@ -9,7 +9,7 @@ public class Integer implements Strategy {
 
     @Override
     public void displayIn(Display display) {
-        display.addNumber();
+        display.addNumberField(getDefaultArgument());
     }
 
     @Override
