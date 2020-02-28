@@ -110,7 +110,7 @@
     <string name="command_result_2">Parse error - for instance, when parsing command-line options, the .wgetrc or .netrc...</string>
     <string name="command_result_3">File I/O error.</string>
     <string name="command_result_4">Network failure.</string>
-    <string name="command_result_5">SSL verification failure.</string>
+    <string name="command_result_5">SSL verification failure. See https://github.com/niccokunzmann/wget-app/issues/4</string>
     <string name="command_result_6">Username/password authentication failure.</string>
     <string name="command_result_7">Protocol errors.</string>
     <string name="command_result_8">Server issued an error response.</string>
