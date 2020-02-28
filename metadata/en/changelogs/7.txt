@@ -1,0 +1,1 @@
+- input urls in configuration with correct keyboard
