@@ -1,1 +1,3 @@
 - input urls in configuration with correct keyboard
+- move commands to top instead of duplicating them
+
