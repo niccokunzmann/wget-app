@@ -27,9 +27,10 @@
 
     <TextView
         android:id="@+id/text_bottom"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin"
         android:text="http://test.xyz" />
 
 </LinearLayout>
