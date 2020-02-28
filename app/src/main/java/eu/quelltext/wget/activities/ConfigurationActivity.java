@@ -94,6 +94,8 @@ public class ConfigurationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuration);
 
+        setTitle(R.string.activity_title_configuration);
+
         // get parcelable from intent https://stackoverflow.com/a/7181792/1320237
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();

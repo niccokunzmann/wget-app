@@ -20,7 +20,7 @@
         </activity>
         <activity
             android:name=".activities.ConfigurationActivity"
-            android:label="@string/activity_title_configuration">
+            android:label="@string/activity_send_name_configuration">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
