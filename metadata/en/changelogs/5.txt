@@ -1,0 +1,1 @@
+- suggest urls of other commands in configuration
