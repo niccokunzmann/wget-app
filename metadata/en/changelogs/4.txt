@@ -1,1 +1,2 @@
 - change name in send menu
+- can read urls from shared files
