@@ -1,1 +1,2 @@
 - allow receiving multiple files
+- add proxy options and thus allow wget through TOR
