@@ -24,6 +24,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -39,8 +44,11 @@ import eu.quelltext.wget.bin.wget.options.display.Display;
 import eu.quelltext.wget.bin.wget.options.display.DisplayableOption;
 import eu.quelltext.wget.bin.wget.options.Option;
 import eu.quelltext.wget.bin.wget.options.Options;
+import eu.quelltext.wget.bin.wget.options.display.File;
 import eu.quelltext.wget.state.CommandDB;
 import eu.quelltext.wget.state.RecyclerObserverAdapter;
+
+import static java.nio.file.Files.readAllBytes;
 
 public class ConfigurationActivity extends AppCompatActivity {
 
@@ -79,11 +87,9 @@ public class ConfigurationActivity extends AppCompatActivity {
             + "\\u205F" // MEDIUM MATHEMATICAL SPACE
             + "\\u3000" // IDEOGRAPHIC SPACE
             ;
-    /* A \s that actually works for Java’s native character set: Unicode */
-    private static final String     WHITESPACE_CHAR_CLASS = "["  + WHITESPACE_CHARS + "]";
     /* A \S that actually works for  Java’s native character set: Unicode */
-    private static final String NON_WHITESPACE_CHAR_CLASS = "[^" + WHITESPACE_CHAR_CLASS + "]";
-    private static final Pattern URL_PATTERN = Pattern.compile("(https?|ftp)://" + NON_WHITESPACE_CHAR_CLASS + "+");;
+    private static final String URL_CLASS = "[^" + WHITESPACE_CHARS + "\"']";
+    private static final Pattern URL_PATTERN = Pattern.compile("(https?|ftp)://" + URL_CLASS + "+");;
 
     private LinearLayout sectionsView;
     private Command command;
@@ -133,8 +139,23 @@ public class ConfigurationActivity extends AppCompatActivity {
             if (clip != null) {
                 for (int i = 0; i < clip.getItemCount(); i ++) {
                     ClipData.Item item = clip.getItemAt(i);
-                    String text = item.getText().toString();
-                    texts.add(text);
+                    CharSequence text = item.getText();
+                    Uri uri = item.getUri();
+                    if (text != null) {
+                        texts.add(text.toString());
+                    }
+                    if (uri != null) {
+                        try {
+                            // load content from uri
+                            InputStream in = getContentResolver().openInputStream(uri);
+                            byte[] bytes = IOUtils.toByteArray(in);
+                            texts.add(new String(bytes));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         }
