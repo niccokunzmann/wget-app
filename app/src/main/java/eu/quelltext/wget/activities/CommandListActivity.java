@@ -25,7 +25,7 @@ import java.util.List;
 import eu.quelltext.wget.R;
 import eu.quelltext.wget.bin.wget.Command;
 
-public class MainActivity extends AppCompatActivity {
+public class CommandListActivity extends AppCompatActivity {
 
     private static final String PREFRENCES_COMMANDS = "commands";
     private static final int ACTIVITY_EDIT_COMMAND = 0;
@@ -139,9 +139,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         // open a new activity, see https://stackoverflow.com/a/4186097/1320237
-                        Intent myIntent = new Intent(MainActivity.this, CommandActivity.class);
+                        Intent myIntent = new Intent(CommandListActivity.this, CommandActivity.class);
                         myIntent.putExtra(CommandActivity.ARG_COMMAND, command); //Optional parameters
-                        MainActivity.this.startActivity(myIntent);
+                        CommandListActivity.this.startActivity(myIntent);
                     }
                 });
 
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                         bottomText.setVisibility(View.VISIBLE);
                         bottomText.setText(command.getUrlText());
                     }
-                    rightText.setText(command.getOptionsText(MainActivity.this));
+                    rightText.setText(command.getOptionsText(CommandListActivity.this));
                 }
 
                 root.setOnLongClickListener(new View.OnLongClickListener() {
@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void editCommand(Command command) {
         // open a new activity, see https://stackoverflow.com/a/4186097/1320237
-        Intent myIntent = new Intent(MainActivity.this, ConfigurationActivity.class);
+        Intent myIntent = new Intent(CommandListActivity.this, ConfigurationActivity.class);
         myIntent.putExtra(ConfigurationActivity.ARG_COMMAND, command); //Optional parameters
         startActivityForResult(myIntent, ACTIVITY_EDIT_COMMAND);
     }
@@ -283,6 +283,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openAboutActivity() {
-
+        // open a new activity, see https://stackoverflow.com/a/4186097/1320237
+        Intent myIntent = new Intent(this, AboutActivity.class);
+        startActivity(myIntent);
     }
 }

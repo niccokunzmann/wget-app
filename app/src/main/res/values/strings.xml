@@ -153,4 +153,25 @@
     <string name="title_activity_main">Wget Commands</string>
     <string name="menu_create_delete_all_commands">delete all</string>
     <string name="menu_about">about</string>
+    <string name="about">This tool wraps the binaries of
+        <a href="http://www.gnu.org/software/wget/">GNU Wget</a>
+        with thanks to <a href="https://github.com/pelya/wget-android">pelya/wget-android</a>.
+        You can view and contribute to the source code <a href="https://github.com/niccokunzmann/wget-app/">on GitHub</a>.
+        Later versions of the app might have been published on <a href="https://f-droid.org/de/packages/eu.quelltext.wget/">F-Droid</a>.\n
+        \n
+        Copyright © 2020 Nicco Kunzmann\n
+        \n
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the <a href="https://github.com/niccokunzmann/wget-app/blob/master/COPYING">GNU General Public License</a> as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.\n
+        \n
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.\n
+        \n
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+    </string>
 </resources>
